@@ -115,30 +115,17 @@ public class Setting extends LinkedHashMap<String, Location> {
 
                 case "state":
                     device.setValue(jsonDevice.optString(currentDeviceAttribute));
-
-                    if (TextUtils.equals(device.getValue(), Device.VALUE_UP)
-                            || TextUtils.equals(device.getValue(), Device.VALUE_DOWN)) {
-                        device.setType(Device.TYPE_SCREEN);
-
-                    } else if (TextUtils.equals(device.getValue(), Device.VALUE_OPENED)
-                            || TextUtils.equals(device.getValue(), Device.VALUE_CLOSED)) {
-                        device.setType(Device.TYPE_CONTACT);
-                    }
-
                     break;
 
                 case "dimlevel":
-                    device.setType(Device.TYPE_DIMMER); // assuming dimmer device
                     device.setDimLevel(jsonDevice.optInt(currentDeviceAttribute));
                     break;
 
                 case "temperature":
-                    device.setType(Device.TYPE_WEATHER); // assuming weather device
                     device.setTemperature(jsonDevice.optInt(currentDeviceAttribute));
                     break;
 
                 case "humidity":
-                    device.setType(Device.TYPE_WEATHER); // assuming weather device
                     device.setHumidity(jsonDevice.optInt(currentDeviceAttribute));
                     break;
 
@@ -146,57 +133,75 @@ public class Setting extends LinkedHashMap<String, Location> {
                     device.setHealthyBattery(jsonDevice.optInt(currentDeviceAttribute) == 1);
                     break;
 
-                case "settings":
-                    final JSONObject jsonSetting = jsonDevice.optJSONObject(currentDeviceAttribute);
+                case "type":
+                    switch(jsonDevice.optInt(currentDeviceAttribute)){
+                        case 1:
+                        case 4:
+                            device.setType(Device.DeviceTypes.SWITCH);
+                            break;
+                        case 2:
+                            device.setType(Device.DeviceTypes.DIMMER);
+                            break;
+                        case 3:
+                            device.setType(Device.DeviceTypes.WEATHER);
+                            break;
+                        case 5:
+                            device.setType(Device.DeviceTypes.SCREEN);
+                            break;
+                        case 6:
+                            device.setType(Device.DeviceTypes.CONTACT);
+                            break;
+                        default:
+                            device.setType(Device.DeviceTypes.UNKNOWN);
+                            break;
 
-                    if (jsonSetting != null) {
-                        injectSettings(device, jsonSetting);
-                        break;
                     }
 
+                case "sunrise":
+                    device.setSunrise(jsonDevice.optInt(currentDeviceAttribute));
+                    break;
+
+                case "sunset":
+                    device.setSunset(jsonDevice.optInt(currentDeviceAttribute));
+                    break;
+
+                /* Device GUI settings */
+                case "gui-show-battery":
+                    device.setShowBattery(jsonDevice.optInt(currentDeviceAttribute) == 1);
+                    break;
+
+                case "gui-show-temperature":
+                    device.setShowTemperature(jsonDevice.optInt(currentDeviceAttribute) == 1);
+                    break;
+
+                case "gui-show-humidity":
+                    device.setShowHumidity(jsonDevice.optInt(currentDeviceAttribute) == 1);
+                    break;
+
+                case "gui-show-sunriseset":
+                    device.setShowSunriseset(jsonDevice.optInt(currentDeviceAttribute) == 1);
+                    break;
+
+                case "gui-decimals":
+                    device.setGUIDecimals(jsonDevice.optInt(currentDeviceAttribute));
+                    break;
+
+                case "device-decimals":
+                    device.setDeviceDecimals(jsonDevice.optInt(currentDeviceAttribute));
+                    break;
+
+                case "gui-readonly":
+                    device.setReadOnly(jsonDevice.optInt(currentDeviceAttribute) == 1);
+                    break;
+
                 default:
-                    log.debug("unhandled device parameter " + currentDeviceAttribute
+                    log.debug("unhandled setting " + currentDeviceAttribute
                             + ":" + jsonDevice.optString(currentDeviceAttribute));
                     break;
             }
         }
 
         return device;
-    }
-
-    private void injectSettings(Device device, JSONObject jsonSetting) {
-        final Iterator jsonValuesIterator = jsonSetting.keys();
-
-        while (jsonValuesIterator.hasNext()) {
-            final String valueKey = (String) jsonValuesIterator.next();
-
-            switch (valueKey) {
-                case "battery":
-                    device.setShowBattery(jsonSetting.optInt(valueKey) == 1);
-                    break;
-
-                case "temperature":
-                    device.setShowTemperature(jsonSetting.optInt(valueKey) == 1);
-                    break;
-
-                case "humidity":
-                    device.setShowHumidity(jsonSetting.optInt(valueKey) == 1);
-                    break;
-
-                case "decimals":
-                    device.setDecimals(jsonSetting.optInt(valueKey));
-                    break;
-
-                case "readonly":
-                    device.setReadOnly(jsonSetting.optInt(valueKey) == 1);
-                    break;
-
-                default:
-                    log.debug("unhandled setting " + valueKey
-                            + ":" + jsonSetting.optString(valueKey));
-                    break;
-            }
-        }
     }
 
     private void updateDevices(String locationId, JSONArray deviceIds, JSONObject jsonValues) {

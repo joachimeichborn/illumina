@@ -25,15 +25,14 @@ public class Device implements Parcelable {
 
     public static final String VALUE_CLOSED = "closed";
 
-    public static final int TYPE_SWITCH = 0;
-
-    public static final int TYPE_DIMMER = 1;
-
-    public static final int TYPE_SCREEN = 2;
-
-    public static final int TYPE_WEATHER = 3;
-
-    public static final int TYPE_CONTACT = 4;
+    public static enum DeviceTypes {
+        UNKNOWN,
+        SWITCH,
+        DIMMER,
+        SCREEN,
+        WEATHER,
+        CONTACT
+    }
 
     public static final int PROPERTY_DIM_LEVEL = 1;
 
@@ -49,7 +48,7 @@ public class Device implements Parcelable {
 
     private String mValue;
 
-    private int mType = TYPE_SWITCH;
+    private DeviceTypes mType = DeviceTypes.UNKNOWN;
 
     private int mDimLevel;
 
@@ -61,9 +60,17 @@ public class Device implements Parcelable {
 
     private boolean mShowHumidity;
 
+    private int mSunrise;
+
+    private int mSunset;
+
+    private boolean mShowSunriseset;
+
     private boolean mShowBattery;
 
-    private int mDecimals;
+    private int mGUIDecimals;
+
+    private int mDeviceDecimals;
 
     private boolean mHasHealthyBattery;
 
@@ -72,6 +79,10 @@ public class Device implements Parcelable {
     private boolean mHasTemperatureValue = false;
 
     private boolean mHasHumidityValue = false;
+
+    private boolean mHasSunriseValue = false;
+
+    private boolean mHasSunsetValue = false;
 
     private boolean mIsReadOnly = false;
 
@@ -109,11 +120,11 @@ public class Device implements Parcelable {
         mValue = value;
     }
 
-    public int getType() {
+    public DeviceTypes getType() {
         return mType;
     }
 
-    public void setType(int type) {
+    public void setType(DeviceTypes type) {
         mType = type;
     }
 
@@ -137,6 +148,14 @@ public class Device implements Parcelable {
         return mTemperature;
     }
 
+    public int getSunrise() {
+        return mSunrise;
+    }
+
+    public int getSunset() {
+        return mSunset;
+    }
+
     public void setReadOnly(boolean readOnly) {
         mIsReadOnly = readOnly;
     }
@@ -146,8 +165,22 @@ public class Device implements Parcelable {
         mTemperature = temperature;
     }
 
+    public void setSunrise(int sunrise) {
+        mHasSunriseValue = true;
+        mSunrise = sunrise;
+    }
+
+    public void setSunset(int sunset) {
+        mHasSunsetValue = true;
+        mSunset = sunset;
+    }
+
     public boolean isShowTemperature() {
         return mShowTemperature;
+    }
+
+    public boolean isShowSunriseset() {
+        return mShowSunriseset;
     }
 
     public boolean isShowBattery() {
@@ -164,6 +197,14 @@ public class Device implements Parcelable {
 
     public boolean hasHumidityValue() {
         return mHasHumidityValue;
+    }
+
+    public boolean hasSunriseValue() {
+        return mHasSunriseValue;
+    }
+
+    public boolean hasSunsetValue() {
+        return mHasSunsetValue;
     }
 
     public boolean hasBatteryValue() {
@@ -200,12 +241,24 @@ public class Device implements Parcelable {
         mShowBattery = showBattery;
     }
 
-    public int getDecimals() {
-        return mDecimals;
+    public void setShowSunriseset(boolean showSunriseset) {
+        mShowSunriseset = showSunriseset;
     }
 
-    public void setDecimals(int decimals) {
-        mDecimals = decimals;
+    public int getGUIDecimals() {
+        return mGUIDecimals;
+    }
+
+    public void setGUIDecimals(int decimals) {
+        mGUIDecimals = decimals;
+    }
+
+    public int getDeviceDecimals() {
+        return mDeviceDecimals;
+    }
+
+    public void setDeviceDecimals(int decimals) {
+        mDeviceDecimals = decimals;
     }
 
     public boolean isOn() {
@@ -245,18 +298,24 @@ public class Device implements Parcelable {
         mName = parcel.readString();
         mOrder = parcel.readInt();
         mValue = parcel.readString();
-        mType = parcel.readInt();
+        mType = DeviceTypes.values()[parcel.readInt()];
         mDimLevel = parcel.readInt();
         mTemperature = parcel.readInt();
         mHumidity = parcel.readInt();
-        mDecimals = parcel.readInt();
+        mSunrise = parcel.readInt();
+        mSunset = parcel.readInt();
+        mGUIDecimals = parcel.readInt();
+        mDeviceDecimals = parcel.readInt();
         mHasHealthyBattery = Boolean.parseBoolean(parcel.readString());
         mShowTemperature = Boolean.parseBoolean(parcel.readString());
         mShowHumidity = Boolean.parseBoolean(parcel.readString());
         mShowBattery = Boolean.parseBoolean(parcel.readString());
+        mShowSunriseset = Boolean.parseBoolean(parcel.readString());
         mHasBatteryValue = Boolean.parseBoolean(parcel.readString());
         mHasHumidityValue = Boolean.parseBoolean(parcel.readString());
         mHasTemperatureValue = Boolean.parseBoolean(parcel.readString());
+        mHasSunriseValue = Boolean.parseBoolean(parcel.readString());
+        mHasSunsetValue = Boolean.parseBoolean(parcel.readString());
         mIsReadOnly = Boolean.parseBoolean(parcel.readString());
     }
 
@@ -267,18 +326,24 @@ public class Device implements Parcelable {
         parcel.writeString(mName);
         parcel.writeInt(mOrder);
         parcel.writeString(mValue);
-        parcel.writeInt(mType);
+        parcel.writeInt(mType.ordinal());
         parcel.writeInt(mDimLevel);
         parcel.writeInt(mTemperature);
         parcel.writeInt(mHumidity);
-        parcel.writeInt(mDecimals);
+        parcel.writeInt(mSunrise);
+        parcel.writeInt(mSunset);
+        parcel.writeInt(mGUIDecimals);
+        parcel.writeInt(mDeviceDecimals);
         parcel.writeString(mHasHealthyBattery ? "true" : "false");
         parcel.writeString(mShowTemperature ? "true" : "false");
         parcel.writeString(mShowHumidity ? "true" : "false");
         parcel.writeString(mShowBattery ? "true" : "false");
+        parcel.writeString(mShowSunriseset ? "true" : "false");
         parcel.writeString(mHasBatteryValue ? "true" : "false");
         parcel.writeString(mHasHumidityValue ? "true" : "false");
         parcel.writeString(mHasTemperatureValue ? "true" : "false");
+        parcel.writeString(mHasSunsetValue ? "true" : "false");
+        parcel.writeString(mHasSunriseValue ? "true" : "false");
         parcel.writeString(mIsReadOnly ? "true" : "false");
     }
 
@@ -294,13 +359,13 @@ public class Device implements Parcelable {
 
     public boolean isWritable() {
         switch (mType) {
-            case TYPE_DIMMER:
-            case TYPE_SCREEN:
-            case TYPE_SWITCH:
+            case DIMMER:
+            case SCREEN:
+            case SWITCH:
                 return !mIsReadOnly;
 
-            case TYPE_WEATHER:
-            case TYPE_CONTACT:
+            case WEATHER:
+            case CONTACT:
             default:
                 return false;
         }

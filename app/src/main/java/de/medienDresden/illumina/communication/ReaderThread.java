@@ -73,9 +73,7 @@ public class ReaderThread extends Thread {
                 continue;
             }
 
-            if (TextUtils.equals("BEAT", message)) {
-                log.info("RAW read: " + message);
-            } else {
+            if (TextUtils.equals("BEAT", message) == false) {
                 log.info("RAW read: " + message);
             }
 

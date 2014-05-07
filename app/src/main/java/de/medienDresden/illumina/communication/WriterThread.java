@@ -42,9 +42,7 @@ public class WriterThread extends Thread {
                 break;
             }
 
-            if (TextUtils.equals("HEART", message)) {
-                log.info("RAW write: " + message);
-            } else {
+            if (TextUtils.equals("HEART", message) == false) {
                 log.info("RAW write: " + message);
             }
 

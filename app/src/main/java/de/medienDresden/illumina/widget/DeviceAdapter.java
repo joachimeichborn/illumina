@@ -45,7 +45,7 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
             final List<Device> filteredDeviceList = new ArrayList<>();
 
             for (Device device : mOriginalDeviceList) {
-                if (!device.isWritable() && device.getType() == Device.TYPE_SCREEN) {
+                if (!device.isWritable() && device.getType() == Device.DeviceTypes.SCREEN) {
                     continue;
                 }
 
@@ -100,36 +100,41 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
     public View getView(int position, View convertView, ViewGroup parent) {
         final LayoutInflater inflater = LayoutInflater.from(getContext());
         final Device device = getItem(position);
-        final int type = device.getType();
+        final Device.DeviceTypes type = device.getType();
 
         View view = convertView;
         DeviceViewHolder viewHolder = null;
 
         if (view == null) {
             switch (type) {
-                case Device.TYPE_SWITCH:
+                case SWITCH:
                     view = inflater.inflate(R.layout.device_list_item_switch, parent, false);
                     viewHolder = new SwitchViewHolder(view);
                     break;
 
-                case Device.TYPE_CONTACT:
+                case CONTACT:
                     view = inflater.inflate(R.layout.device_list_item_contact, parent, false);
                     viewHolder = new ContactViewHolder(view);
                     break;
 
-                case Device.TYPE_DIMMER:
+                case DIMMER:
                     view = inflater.inflate(R.layout.device_list_item_dimmer, parent, false);
                     viewHolder = new DimmerViewHolder(view);
                     break;
 
-                case Device.TYPE_SCREEN:
+                case SCREEN:
                     view = inflater.inflate(R.layout.device_list_item_screen, parent, false);
                     viewHolder = new ScreenViewHolder(view);
                     break;
 
-                case Device.TYPE_WEATHER:
+                case WEATHER:
                     view = inflater.inflate(R.layout.device_list_item_weather, parent, false);
                     viewHolder = new WeatherViewHolder(view);
+                    break;
+
+                case UNKNOWN:
+                    view = inflater.inflate(R.layout.device_list_item_unknown, parent, false);
+                    viewHolder = new UnknownViewHolder(view);
                     break;
             }
 
@@ -150,7 +155,7 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 
     @Override
     public int getItemViewType(int position) {
-        return getItem(position).getType();
+        return getItem(position).getType().ordinal();
     }
 
     @Override
@@ -231,6 +236,17 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 
             mCheckBox.setChecked(device.isOn());
             mCheckBox.setEnabled(device.isWritable());
+        }
+
+    }
+
+    private static class UnknownViewHolder extends DeviceViewHolder {
+
+        UnknownViewHolder(View view) {
+            super(view);
+        }
+
+        void setDevice(Device device) {
         }
 
     }
@@ -335,10 +351,15 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
         private final TextView mTemperatureText;
         private final ViewGroup mHumidity;
         private final TextView mHumidityText;
+        private final ViewGroup mSunrise;
+        private final TextView mSunriseText;
+        private final ViewGroup mSunset;
+        private final TextView mSunsetText;
         private final ImageView mBatteryImage;
 
         private final DecimalFormat temperatureFormat = new DecimalFormat("#°");
         private final DecimalFormat humidityFormat = new DecimalFormat("#%");
+        private final DecimalFormat timeFormat = new DecimalFormat("00");
 
         private static Drawable sBatteryFullDrawable;
         private static Drawable sBatteryEmptyDrawable;
@@ -353,6 +374,12 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
             mHumidityText = (TextView) view.findViewById(R.id.humidity_text);
 
             mBatteryImage = (ImageView) view.findViewById(R.id.battery);
+
+            mSunrise = (ViewGroup) view.findViewById(R.id.sunrise);
+            mSunriseText = (TextView) view.findViewById(R.id.sunrise_text);
+
+            mSunset = (ViewGroup) view.findViewById(R.id.sunset);
+            mSunsetText = (TextView) view.findViewById(R.id.sunset_text);
         }
 
         static void setBatteryDrawables(Drawable full, Drawable empty) {
@@ -366,15 +393,29 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
             if (device.hasTemperatureValue() && device.isShowTemperature()) {
                 mTemperature.setVisibility(View.VISIBLE);
                 mTemperatureText.setText(temperatureFormat.format(
-                        device.getTemperature() / Math.pow(10, device.getDecimals())));
+                        (device.getTemperature() / Math.pow(10, device.getDeviceDecimals()))));
             } else {
                 mTemperature.setVisibility(View.GONE);
+            }
+
+            if (device.hasSunriseValue() && device.hasSunsetValue() && device.isShowSunriseset()) {
+                mSunrise.setVisibility(View.VISIBLE);
+                mSunset.setVisibility(View.VISIBLE);
+                int hour = device.getSunrise() / 100;
+                int min = (device.getSunrise() - (hour*100));
+                mSunriseText.setText(timeFormat.format(Double.valueOf(hour)) + ":" + timeFormat.format(Double.valueOf(min)));
+                hour = device.getSunset() / 100;
+                min = (device.getSunset() - (hour*100));
+                mSunsetText.setText(timeFormat.format(Double.valueOf(hour)) + ":" + timeFormat.format(Double.valueOf(min)));
+            } else {
+                mSunrise.setVisibility(View.GONE);
+                mSunset.setVisibility(View.GONE);
             }
 
             if (device.hasHumidityValue() && device.isShowHumidity()) {
                 mHumidity.setVisibility(View.VISIBLE);
                 mHumidityText.setText(humidityFormat.format(
-                        device.getHumidity() / Math.pow(10, device.getDecimals()) / 100));
+                        (device.getHumidity() / Math.pow(10, device.getDeviceDecimals()) / 100)));
             } else {
                 mHumidity.setVisibility(View.GONE);
             }

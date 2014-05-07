@@ -3,6 +3,8 @@
     <attr name="battery_empty" format="reference" />
     <attr name="battery_full" format="reference" />
     <attr name="thermometer" format="reference" />
+    <attr name="sunrise" format="reference" />
+    <attr name="sunset" format="reference" />
     <attr name="humidity" format="reference" />
     <attr name="search_action_icon" format="reference" />
     <attr name="connect_action_icon" format="reference" />

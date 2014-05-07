@@ -14,11 +14,11 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.util.Log;
 
-import org.acra.ACRA;
-import org.acra.ReportField;
-import org.acra.ReportingInteractionMode;
-import org.acra.annotation.ReportsCrashes;
-import org.codechimp.apprater.AppRater;
+//import org.acra.ACRA;
+//import org.acra.ReportField;
+//import org.acra.ReportingInteractionMode;
+//import org.acra.annotation.ReportsCrashes;
+//import org.codechimp.apprater.AppRater;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,31 +42,31 @@ import de.psdev.licensesdialog.LicenseResolver;
 import de.psdev.licensesdialog.licenses.CreativeCommonsAttributionNoDerivs30Unported;
 import de.psdev.licensesdialog.licenses.GnuLesserGeneralPublicLicense21;
 
-@ReportsCrashes(
-        formKey = "",
-        applicationLogFileLines = 300,
-        mode = ReportingInteractionMode.DIALOG,
-        formUriBasicAuthLogin = BuildConfig.BITBUCKET_REPORTER_USER,
-        formUriBasicAuthPassword = BuildConfig.BITBUCKET_REPORTER_PASSWORD,
-
-        resToastText = R.string.crash_toast_text,
-        resDialogText = R.string.crash_dialog_text,
-        resDialogTitle = R.string.crash_dialog_title,
-        resDialogCommentPrompt = R.string.crash_dialog_comment_prompt,
-        resDialogOkToast = R.string.crash_dialog_ok_toast,
-
-        customReportContent = {
-                ReportField.APPLICATION_LOG,
-                ReportField.STACK_TRACE,
-                ReportField.PHONE_MODEL,
-                ReportField.ANDROID_VERSION,
-                ReportField.SHARED_PREFERENCES,
-                ReportField.USER_COMMENT,
-                ReportField.INSTALLATION_ID,
-                ReportField.USER_EMAIL,
-                ReportField.THREAD_DETAILS
-        }
-)
+//@ReportsCrashes(
+//        formKey = "",
+//        applicationLogFileLines = 300,
+//        mode = ReportingInteractionMode.DIALOG,
+//        formUriBasicAuthLogin = BuildConfig.BITBUCKET_REPORTER_USER,
+//        formUriBasicAuthPassword = BuildConfig.BITBUCKET_REPORTER_PASSWORD,
+//
+//        resToastText = R.string.crash_toast_text,
+//        resDialogText = R.string.crash_dialog_text,
+//        resDialogTitle = R.string.crash_dialog_title,
+//        resDialogCommentPrompt = R.string.crash_dialog_comment_prompt,
+//        resDialogOkToast = R.string.crash_dialog_ok_toast,
+//
+//        customReportContent = {
+//                ReportField.APPLICATION_LOG,
+//                ReportField.STACK_TRACE,
+//                ReportField.PHONE_MODEL,
+//                ReportField.ANDROID_VERSION,
+//                ReportField.SHARED_PREFERENCES,
+//                ReportField.USER_COMMENT,
+//                ReportField.INSTALLATION_ID,
+//                ReportField.USER_EMAIL,
+//                ReportField.THREAD_DETAILS
+//        }
+//)
 public class Illumina extends Application {
 
     private static final String TAG = Illumina.class.getSimpleName();
@@ -87,10 +87,10 @@ public class Illumina extends Application {
     public void onCreate() {
         super.onCreate();
 
-        initErrorReporting();
-        initLogging();
-        initLicenses();
-        initAppRater();
+//        initErrorReporting();
+//        initLogging();
+//        initLicenses();
+//        initAppRater();
 
         /* If this service isn't started explicitly, it would be
          * destroyed if no more clients are bound */
@@ -139,24 +139,24 @@ public class Illumina extends Application {
     }
 
     private void initAppRater() {
-        AppRater.setMarket(BuildConfig.MARKET);
+//        AppRater.setMarket(BuildConfig.MARKET);
     }
 
     private void initErrorReporting() {
-        final File logFile = new File(getFilesDir(), LOG_FILE_NAME);
-
-        ACRA.init(this);
-        ACRA.getConfig().setApplicationLogFile(logFile.getAbsolutePath());
-
-        try {
-            ACRA.getErrorReporter().setReportSender(
-                    new BitbucketReportSender(
-                            BuildConfig.BITBUCKET_REPOSITORY_USER,
-                            BuildConfig.BITBUCKET_REPOSITORY_NAME));
-
-        } catch (Exception exception) {
-            Log.e(TAG, "illumina won't be able to send error reports", exception);
-        }
+//        final File logFile = new File(getFilesDir(), LOG_FILE_NAME);
+//
+//        ACRA.init(this);
+//        ACRA.getConfig().setApplicationLogFile(logFile.getAbsolutePath());
+//
+//        try {
+//            ACRA.getErrorReporter().setReportSender(
+//                    new BitbucketReportSender(
+//                            BuildConfig.BITBUCKET_REPOSITORY_USER,
+//                            BuildConfig.BITBUCKET_REPOSITORY_NAME));
+//
+//        } catch (Exception exception) {
+//            Log.e(TAG, "illumina won't be able to send error reports", exception);
+//        }
     }
 
     private void initLicenses() {

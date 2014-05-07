@@ -54,10 +54,13 @@
     <string name="contact_developer">Contact Developer</string>
     <string name="contact_developer_summary">Here you can send greetings and criticism to the developer.</string>
     <string name="developer_url">https://plus.google.com/102758503227173766807</string>
+    <string name="sunrise_placeholder">0:00</string>
+    <string name="sunset_placeholder">0:00</string>
     <string name="temperature_placeholder">24°</string>
     <string name="humidity_placeholder">63%</string>
-    <string name="search">find Raspberry</string>
+    <string name="unknown_placeholder">unknown</string>
+    <string name="search">Find pilight</string>
     <string name="service_not_found">No service found</string>
-    <string name="auto_connect">connect automatically</string>
-    <string name="auto_connect_summary">Since pilight 3, illumina can find and connect your Raspberry automatically.</string>
+    <string name="auto_connect">Connect automatically</string>
+    <string name="auto_connect_summary">Since pilight 3, illumina can find and connect to pilight automatically.</string>
 </resources>

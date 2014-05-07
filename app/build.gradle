@@ -6,7 +6,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.7.+'
+        classpath 'com.android.tools.build:gradle:0.9.+'
     }
 }
 
@@ -14,29 +14,29 @@ repositories {
     mavenCentral()
 }
 
-assert project.hasProperty("keystoreFile")
-assert project.hasProperty("keystoreAlias")
-assert project.hasProperty("keystorePassword")
-
-assert project.hasProperty("bitbucketRepositoryUser")
-assert project.hasProperty("bitbucketRepositoryName")
-assert project.hasProperty("bitbucketReporterUser")
-assert project.hasProperty("bitbucketReporterPassword")
+//assert project.hasProperty("keystoreFile")
+//assert project.hasProperty("keystoreAlias")
+//assert project.hasProperty("keystorePassword")
+//
+//assert project.hasProperty("bitbucketRepositoryUser")
+//assert project.hasProperty("bitbucketRepositoryName")
+//assert project.hasProperty("bitbucketReporterUser")
+//assert project.hasProperty("bitbucketReporterPassword")
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.0.1"
+    buildToolsVersion "19.0.3"
 
     productFlavors {
-        amazon {
-            buildConfigField "org.codechimp.apprater.Market", "MARKET", \
-                "new org.codechimp.apprater.AmazonMarket()"
-        }
+//        amazon {
+//            buildConfigField "org.codechimp.apprater.Market", "MARKET", \
+//                "new org.codechimp.apprater.AmazonMarket()"
+//        }
 
-        google {
-            buildConfigField "org.codechimp.apprater.Market", "MARKET", \
-                "new org.codechimp.apprater.GoogleMarket()"
-        }
+//        google {
+//            buildConfigField "org.codechimp.apprater.Market", "MARKET", \
+//                "new org.codechimp.apprater.GoogleMarket()"
+//        }
     }
 
     defaultConfig {
@@ -45,25 +45,25 @@ android {
         versionCode 9
         versionName "1.3.1"
 
-        buildConfigField "String", "BITBUCKET_REPOSITORY_NAME", \
-            "\"" + bitbucketRepositoryName + "\""
-
-        buildConfigField "String", "BITBUCKET_REPOSITORY_USER", \
-            "\"" + bitbucketRepositoryUser + "\""
-
-        buildConfigField "String", "BITBUCKET_REPORTER_USER", \
-            "\"" + bitbucketReporterUser + "\""
-
-        buildConfigField "String", "BITBUCKET_REPORTER_PASSWORD", \
-            "\"" + bitbucketReporterPassword + "\""
+//        buildConfigField "String", "BITBUCKET_REPOSITORY_NAME", \
+//            "\"" + bitbucketRepositoryName + "\""
+//
+//        buildConfigField "String", "BITBUCKET_REPOSITORY_USER", \
+//            "\"" + bitbucketRepositoryUser + "\""
+//
+//        buildConfigField "String", "BITBUCKET_REPORTER_USER", \
+//            "\"" + bitbucketReporterUser + "\""
+//
+//        buildConfigField "String", "BITBUCKET_REPORTER_PASSWORD", \
+//            "\"" + bitbucketReporterPassword + "\""
     }
 
     signingConfigs {
         release {
-            storeFile file(keystoreFile)
-            storePassword keystorePassword
-            keyAlias keystoreAlias
-            keyPassword keystorePassword
+//            storeFile file(keystoreFile)
+//            storePassword keystorePassword
+//            keyAlias keystoreAlias
+//            keyPassword keystorePassword
         }
     }
 
@@ -79,6 +79,7 @@ android {
             runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), \
                 'proguard-rules.txt'
+            debuggable false
         }
     }
 }

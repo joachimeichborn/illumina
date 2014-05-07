@@ -133,16 +133,16 @@ public class DeviceListFragment extends BaseListFragment implements DeviceAdapte
         final Device device = (Device) getListAdapter().getItem(position);
 
         switch (device.getType()) {
-            case Device.TYPE_SCREEN:
+            case SCREEN:
                 device.setValue(device.isUp() ? Device.VALUE_DOWN : Device.VALUE_UP);
                 break;
 
-            case Device.TYPE_SWITCH:
-            case Device.TYPE_DIMMER:
+            case SWITCH:
+            case DIMMER:
                 device.setValue(device.isOn() ? Device.VALUE_OFF : Device.VALUE_ON);
                 break;
 
-            case Device.TYPE_WEATHER:
+            case WEATHER:
                 return;
         }
 
