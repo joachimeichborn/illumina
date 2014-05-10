@@ -1,4 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+~ illumina, a pilight remote
+~
+~ Copyright (c) 2014 Peter Heisig <http://google.com/+PeterHeisig>
+~
+~ Illumina is free software: you can redistribute it and/or modify
+~ it under the terms of the GNU General Public License as published by
+~ the Free Software Foundation, either version 3 of the License, or
+~ (at your option) any later version.
+~
+~ Ilummina is distributed in the hope that it will be useful,
+~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+~ GNU General Public License for more details.
+~
+~ You should have received a copy of the GNU General Public License
+~ along with illumina. If not, see <http://www.gnu.org/licenses/>.
+-->
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
@@ -70,6 +89,8 @@
         android:layout_alignRight="@id/centered_layout"
         android:autoLink="web"
         android:text="@string/connection_help"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textAlignment="center"
+        android:gravity="center_vertical|center_horizontal" />
 
 </RelativeLayout>

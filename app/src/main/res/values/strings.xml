@@ -1,4 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+~ illumina, a pilight remote
+~
+~ Copyright (c) 2014 Peter Heisig <http://google.com/+PeterHeisig>
+~                    CurlyMo <http://www.pilight.org>
+~
+~ Illumina is free software: you can redistribute it and/or modify
+~ it under the terms of the GNU General Public License as published by
+~ the Free Software Foundation, either version 3 of the License, or
+~ (at your option) any later version.
+~
+~ Ilummina is distributed in the hope that it will be useful,
+~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+~ GNU General Public License for more details.
+~
+~ You should have received a copy of the GNU General Public License
+~ along with illumina. If not, see <http://www.gnu.org/licenses/>.
+-->
+
 <resources>
 
     <string-array name="theme_labels">
@@ -20,15 +40,15 @@
     <string name="connect">connect</string>
     <string name="hostname_or_ip">Hostname or IP</string>
     <string name="port">Port</string>
-    <string name="connection_help">The default pilight configuration (version 2) mentions 5000 for the port number. Only IP or hostname, respectively the address of your Raspberry has no default value. For further information consult http://wiki.pilight.org/doku.php/settings</string>
+    <string name="connection_help">Either set your pilight server:port configuration or let illumina locate pilight automatically.</string>
     <string name="colon">:</string>
-    <string name="unknown_error">Sorry, this is an unknown error</string>
-    <string name="wrong_settings_error">Connection failed! Please reconsider your host and/or port setting</string>
-    <string name="remote_closed_connection">Your Raspberry closed the connection, try reconnecting</string>
-    <string name="problem_with_pi">Connection failed! There seem to be a problem with your Raspberry</string>
-    <string name="no_data">Nothing found. You should configure some devices on your Raspberry. Take a look at http://wiki.pilight.org/doku.php/config</string>
+    <string name="unknown_error">Sorry, this is an unknown error,</string>
+    <string name="wrong_settings_error">Connection failed! Please reconsider your host and/or port setting.</string>
+    <string name="remote_closed_connection">Your Raspberry Pi closed the connection, try reconnecting.</string>
+    <string name="problem_with_pi">Connection failed! There seem to be a problem with your Raspberry Pi</string>
+    <string name="no_data">Nothing found. You should configure some devices in your pilight installation. Take a look at http://wiki.pilight.org/doku.php/config</string>
     <string name="notices_title">Licences</string>
-    <string name="notices_close">close</string>
+    <string name="notices_close">Close</string>
     <string name="about">About illumina</string>
     <string name="rate_illumina">Rate illumina</string>
     <string name="rate_illumina_summary">Go to the App Store and rate illumina.</string>
@@ -38,7 +58,7 @@
     <string name="pref_enable_acra">Enable</string>
     <string name="pref_acra_summary">Enable chrash reports to help improving illumina.</string>
     <string name="pref_acra_syslog">Include syslog</string>
-    <string name="pref_acra_syslog_summary">Enable the inclusion of the log entries right before a crash</string>
+    <string name="pref_acra_syslog_summary">Enable the inclusion of the log entries right before a crash.</string>
     <string name="pref_acra_alwaysaccept">Auto send</string>
     <string name="pref_acra_alwaysaccept_summary">Disable any notification and send chrash reports silently.</string>
     <string name="pref_acra_user_email">Your mail address</string>

@@ -16,4 +16,4 @@ sleep 5;
 start'
 
 # prepare app
-adb uninstall de.medienDresden.illumina && adb install app/build/apk/app-google-release.apk && adb shell am start -n de.medienDresden.illumina/.activity.ConnectionActivity
+adb uninstall nl.pilight.illumina && adb install app/build/apk/app-google-release.apk && adb shell am start -n nl.pilight.illumina/.activity.ConnectionActivity

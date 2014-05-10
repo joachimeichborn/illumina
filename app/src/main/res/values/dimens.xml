@@ -1,6 +1,27 @@
+<!--
+~ illumina, a pilight remote
+~
+~ Copyright (c) 2014 Peter Heisig <http://google.com/+PeterHeisig>
+~                    CurlyMo <http://www.pilight.org>
+~
+~ Illumina is free software: you can redistribute it and/or modify
+~ it under the terms of the GNU General Public License as published by
+~ the Free Software Foundation, either version 3 of the License, or
+~ (at your option) any later version.
+~
+~ Ilummina is distributed in the hope that it will be useful,
+~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+~ GNU General Public License for more details.
+~
+~ You should have received a copy of the GNU General Public License
+~ along with illumina. If not, see <http://www.gnu.org/licenses/>.
+-->
+
 <resources>
     <dimen name="list_item_height">64dp</dimen>
     <dimen name="list_item_padding">16dp</dimen>
+    <dimen name="list_item_img_height">32dp</dimen>
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="centered_message_margin">64dp</dimen>
     <dimen name="settings_margin">0dp</dimen>
