@@ -113,6 +113,10 @@ public class DeviceListFragment extends BaseListFragment implements DeviceAdapte
             log.info(mLocationId + " has no devices to show");
         }
 
+        if (getActivity() == null) {
+            return;
+        }
+
         final DeviceAdapter adapter = new DeviceAdapter(
                 getActivity(), new ArrayList<>(location.values()), this);
 

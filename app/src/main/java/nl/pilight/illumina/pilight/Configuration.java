@@ -35,9 +35,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class Setting extends LinkedHashMap<String, Location> {
+public class Configuration extends LinkedHashMap<String, Location> {
 
-    public static final Logger log = LoggerFactory.getLogger(Setting.class);
+    public static final Logger log = LoggerFactory.getLogger(Configuration.class);
 
     private final RemoteChangeHandler mRemoteChangeHandler;
 
@@ -47,8 +47,8 @@ public class Setting extends LinkedHashMap<String, Location> {
 
     }
 
-    private Setting(RemoteChangeHandler handler,
-                    JSONObject locationsJson) throws JSONException {
+    private Configuration(RemoteChangeHandler handler,
+                          JSONObject locationsJson) throws JSONException {
 
         mRemoteChangeHandler = handler;
 
@@ -314,22 +314,24 @@ public class Setting extends LinkedHashMap<String, Location> {
         }
     }
 
-    public static Setting create(RemoteChangeHandler handler, JSONObject json) throws JSONException {
-        return new Setting(handler, json);
+    public static Configuration create(RemoteChangeHandler handler, JSONObject json) throws JSONException {
+        return new Configuration(handler, json);
     }
 
     public void update(JSONObject json) {
         log.info("update setting");
 
-        final JSONObject jsonDevices = json.optJSONObject("devices");
-        final JSONObject jsonValues = json.optJSONObject("values");
-        final Iterator locationIterator = jsonDevices.keys();
+        if(json.has("devices")) {
+            final JSONObject jsonDevices = json.optJSONObject("devices");
+            final JSONObject jsonValues = json.optJSONObject("values");
+            final Iterator locationIterator = jsonDevices.keys();
 
-        while (locationIterator.hasNext()) {
-            final String locationId = (String) locationIterator.next();
-            final JSONArray deviceIds = jsonDevices.optJSONArray(locationId);
+            while (locationIterator.hasNext()) {
+                final String locationId = (String) locationIterator.next();
+                final JSONArray deviceIds = jsonDevices.optJSONArray(locationId);
 
-            updateDevices(locationId, deviceIds, jsonValues);
+                updateDevices(locationId, deviceIds, jsonValues);
+            }
         }
     }
 

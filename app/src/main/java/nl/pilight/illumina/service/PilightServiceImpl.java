@@ -42,13 +42,13 @@ import nl.pilight.illumina.communication.StreamingSocket;
 import nl.pilight.illumina.communication.StreamingSocketImpl;
 import nl.pilight.illumina.pilight.Device;
 import nl.pilight.illumina.pilight.Location;
-import nl.pilight.illumina.pilight.Setting;
+import nl.pilight.illumina.pilight.Configuration;
 
-public class PilightServiceImpl extends Service implements PilightService, Setting.RemoteChangeHandler {
+public class PilightServiceImpl extends Service implements PilightService, Configuration.RemoteChangeHandler {
 
     public static final Logger log = LoggerFactory.getLogger(PilightServiceImpl.class);
 
-    private Setting mSetting;
+    private Configuration mConfiguration;
 
     private boolean mCurrentlyTriesReconnecting;
 
@@ -220,7 +220,7 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
         } else if (!TextUtils.equals(json.optString("origin"), "config")) {
             log.warn("- wrong origin, ignored");
         } else {
-            mSetting.update(json);
+            mConfiguration.update(json);
         }
     }
 
@@ -230,7 +230,7 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
         if (!json.isNull("config")) {
             try {
                 mPilight.startHeartBeat();
-                mSetting = Setting.create(this, json.getJSONObject("config"));
+                mConfiguration = Configuration.create(this, json.getJSONObject("config"));
 
                 if (!mCurrentlyTriesReconnecting) {
                     sendBroadcast(News.CONNECTED);
@@ -483,7 +483,7 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
         final Message message = Message.obtain(null, News.LOCATION);
         final Bundle data = new Bundle();
 
-        data.putParcelable(Extra.LOCATION, mSetting.get(locationId));
+        data.putParcelable(Extra.LOCATION, mConfiguration.get(locationId));
 
         assert message != null;
         message.setData(data);
@@ -497,7 +497,7 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
 
     private void sendLocationList(Messenger receiver) {
         // fix due to issue #34
-        if (mSetting == null) {
+        if (mConfiguration == null) {
             sendBroadcast(News.ERROR, Error.HANDSHAKE_FAILED);
             mState = PilightState.Disconnected;
             return;
@@ -507,7 +507,7 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
         final Bundle data = new Bundle();
 
         data.putParcelableArrayList(Extra.LOCATION_LIST,
-                new ArrayList<>(mSetting.values()));
+                new ArrayList<>(mConfiguration.values()));
 
         assert message != null;
         message.setData(data);
