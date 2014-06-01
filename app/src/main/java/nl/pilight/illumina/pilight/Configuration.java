@@ -162,6 +162,9 @@ public class Configuration extends LinkedHashMap<String, Location> {
                         case 6:
                             device.setType(Device.DeviceTypes.CONTACT);
                             break;
+                        case 8:
+                            device.setType(Device.DeviceTypes.DATETIME);
+                            break;
                         default:
                             device.setType(Device.DeviceTypes.UNKNOWN);
                             break;
@@ -190,6 +193,30 @@ public class Configuration extends LinkedHashMap<String, Location> {
 
                 case "poll-interval":
                     device.setPollInterval(jsonDevice.optInt(currentDeviceAttribute));
+                    break;
+
+                case "year":
+                    device.setYear(jsonDevice.optInt(currentDeviceAttribute));
+                    break;
+
+                case "month":
+                    device.setMonth(jsonDevice.optInt(currentDeviceAttribute));
+                    break;
+
+                case "day":
+                    device.setDay(jsonDevice.optInt(currentDeviceAttribute));
+                    break;
+
+                case "hour":
+                    device.setHour(jsonDevice.optInt(currentDeviceAttribute));
+                    break;
+
+                case "minute":
+                    device.setMinute(jsonDevice.optInt(currentDeviceAttribute));
+                    break;
+
+                case "second":
+                    device.setSecond(jsonDevice.optInt(currentDeviceAttribute));
                     break;
 
                 /* Device GUI settings */
@@ -223,6 +250,10 @@ public class Configuration extends LinkedHashMap<String, Location> {
 
                 case "gui-readonly":
                     device.setReadOnly(jsonDevice.optInt(currentDeviceAttribute) == 1);
+                    break;
+
+                case "gui-datetime-format":
+                    device.setDateTimeFormat(jsonDevice.optString(currentDeviceAttribute));
                     break;
 
                 default:
@@ -277,6 +308,30 @@ public class Configuration extends LinkedHashMap<String, Location> {
 
                 case "battery":
                     device.setHealthyBattery(jsonValues.optInt(valueKey) == 1);
+                    break;
+
+                case "year":
+                    device.setYear(jsonValues.optInt(valueKey));
+                    break;
+
+                case "month":
+                    device.setMonth(jsonValues.optInt(valueKey));
+                    break;
+
+                case "day":
+                    device.setDay(jsonValues.optInt(valueKey));
+                    break;
+
+                case "hour":
+                    device.setHour(jsonValues.optInt(valueKey));
+                    break;
+
+                case "minute":
+                    device.setMinute(jsonValues.optInt(valueKey));
+                    break;
+
+                case "second":
+                    device.setSecond(jsonValues.optInt(valueKey));
                     break;
 
                 default:

@@ -36,9 +36,15 @@ public class Device implements Parcelable {
         UNKNOWN,
         SWITCH,
         DIMMER,
-        SCREEN,
         WEATHER,
-        CONTACT
+        RELAY,
+        SCREEN,
+        CONTACT,
+        PENDINGSW,
+        DATETIME,
+        XBMC,
+        LIRC,
+        WEBCAM
     }
     public static enum Properties {
         DIMLEVEL,
@@ -57,6 +63,7 @@ public class Device implements Parcelable {
     private int mDimLevel;
     private int mTemperature;
     private boolean mShowTemperature;
+    private boolean mHasDateTimeFormat;
     private int mHumidity;
     private boolean mShowHumidity;
     private int mSunrise;
@@ -66,6 +73,13 @@ public class Device implements Parcelable {
     private boolean mShowUpdate;
     private int mGUIDecimals;
     private int mDeviceDecimals;
+    private int mYear;
+    private int mMonth;
+    private int mDay;
+    private int mHour;
+    private int mMinute;
+    private int mSecond;
+    private String mDateTimeFormat;
     private boolean mAll;
     private boolean mHasHealthyBattery;
     private boolean mHasBatteryValue = false;
@@ -159,6 +173,20 @@ public class Device implements Parcelable {
 
     public int getMinInterval() { return mMinInterval; }
 
+    public int getYear() { return mYear; }
+
+    public int getMonth() { return mMonth; }
+
+    public int getDay() { return mDay; }
+
+    public int getHour() { return mHour; }
+
+    public int getMinute() { return mMinute; }
+
+    public int getSecond() { return mSecond; }
+
+    public String getDateTimeFormat() { return mDateTimeFormat; }
+
     public void setReadOnly(boolean readOnly) {
         mIsReadOnly = readOnly;
     }
@@ -221,6 +249,8 @@ public class Device implements Parcelable {
     public boolean hasBatteryValue() {
         return mHasBatteryValue;
     }
+
+    public boolean hasDatetTimeFormat() { return mHasDateTimeFormat; }
 
     public void setHealthyBattery(boolean hasHealthyBattery) {
         mHasBatteryValue = true;
@@ -296,6 +326,23 @@ public class Device implements Parcelable {
         return TextUtils.equals(mValue, VALUE_CLOSED);
     }
 
+    public void setYear(int year) { mYear = year; }
+
+    public void setMonth(int month) { mMonth = month; }
+
+    public void setDay(int day) { mDay = day; }
+
+    public void setHour(int hour) { mHour = hour; }
+
+    public void setMinute(int minute) { mMinute = minute; }
+
+    public void setSecond(int second) { mSecond = second; }
+
+    public void setDateTimeFormat(String datetimeformat) {
+        mHasDateTimeFormat = true;
+        mDateTimeFormat = datetimeformat;
+    }
+
     public static final Parcelable.Creator<Device> CREATOR
             = new Parcelable.Creator<Device>() {
 
@@ -327,8 +374,16 @@ public class Device implements Parcelable {
         mHumidity = parcel.readInt();
         mSunrise = parcel.readInt();
         mSunset = parcel.readInt();
+        mYear = parcel.readInt();
+        mMonth = parcel.readInt();
+        mDay = parcel.readInt();
+        mHour = parcel.readInt();
+        mMinute = parcel.readInt();
+        mSecond = parcel.readInt();
         mGUIDecimals = parcel.readInt();
         mDeviceDecimals = parcel.readInt();
+        mDateTimeFormat = parcel.readString();
+        mHasDateTimeFormat = Boolean.parseBoolean(parcel.readString());
         mHasHealthyBattery = Boolean.parseBoolean(parcel.readString());
         mShowTemperature = Boolean.parseBoolean(parcel.readString());
         mShowHumidity = Boolean.parseBoolean(parcel.readString());
@@ -360,8 +415,16 @@ public class Device implements Parcelable {
         parcel.writeInt(mHumidity);
         parcel.writeInt(mSunrise);
         parcel.writeInt(mSunset);
+        parcel.writeInt(mYear);
+        parcel.writeInt(mMonth);
+        parcel.writeInt(mDay);
+        parcel.writeInt(mHour);
+        parcel.writeInt(mMinute);
+        parcel.writeInt(mSecond);
         parcel.writeInt(mGUIDecimals);
         parcel.writeInt(mDeviceDecimals);
+        parcel.writeString(mDateTimeFormat);
+        parcel.writeString(mHasDateTimeFormat ? "true" : "false");
         parcel.writeString(mHasHealthyBattery ? "true" : "false");
         parcel.writeString(mShowTemperature ? "true" : "false");
         parcel.writeString(mShowHumidity ? "true" : "false");

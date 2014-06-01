@@ -44,8 +44,11 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.Timer;
@@ -154,6 +157,11 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
                     viewHolder = new WeatherViewHolder(view);
                     break;
 
+                case DATETIME:
+                    view = inflater.inflate(R.layout.device_list_item_datetime, parent, false);
+                    viewHolder = new DateTimeViewHolder(view);
+                    break;
+
                 case UNKNOWN:
                     view = inflater.inflate(R.layout.device_list_item_unknown, parent, false);
                     viewHolder = new UnknownViewHolder(view);
@@ -182,7 +190,7 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 
     @Override
     public int getViewTypeCount() {
-        return 5;
+        return Device.DeviceTypes.values().length;
     }
 
     @Override
@@ -499,4 +507,59 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 
     }
 
+    private static class DateTimeViewHolder extends DeviceViewHolder {
+
+        private final TextView mDateTime;
+
+        DateTimeViewHolder(View view) {
+            super(view);
+
+            mDateTime = (TextView) view.findViewById(R.id.datetime);
+        }
+
+        void setDevice(Device device) {
+            super.setDevice(device);
+
+            String format = new String("yyyy-MM-dd HH:mm:ss");
+
+            if(device.hasDatetTimeFormat()) {
+                format = new String(device.getDateTimeFormat()).replace("Y", "y");
+                format = new String(format).replace("DDDD", "dd");
+                format = new String(format).replace("DDD", "dd");
+                format = new String(format).replace("DD", "dd");
+                format = new String(format).replace("D", "d");
+                format = new String(format).replace("e", "E");
+                format = new String(format).replace("WW", "ww");
+                format = new String(format).replace("W", "w");
+                format = new String(format).replace("gggg", "YYYY");
+                format = new String(format).replace("gg", "YY");
+                format = new String(format).replace("GGGG", "YYYY");
+                format = new String(format).replace("GG", "YY");
+                format = new String(format).replace("A", "a");
+                format = new String(format).replace("SSS", "S");
+                format = new String(format).replace("SS", "S");
+                format = new String(format).replace("ZZ", "XX");
+                format = new String(format).replace("Z", "X");
+                format = new String(format).replace("LLLL", "yyyy-MM-dd HH:mm:ss");
+                format = new String(format).replace("LLL", "yyyy-MM-dd HH:mm:ss");
+                format = new String(format).replace("LL", "yyyy-MM-dd HH:mm:ss");
+                format = new String(format).replace("L", "yyyy-MM-dd HH:mm:ss");
+            }
+            try {
+                String unformattedDate = String.format("%d-%d-%d %d:%d:%d", device.getYear(),
+                        device.getMonth(), device.getDay(), device.getHour(), device.getMinute(),
+                        device.getSecond());
+                Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(unformattedDate);
+                try {
+                    String formattedDate = new SimpleDateFormat(format).format(date);
+                    mDateTime.setText(formattedDate);
+                } catch(IllegalArgumentException e) {
+                    mDateTime.setText(unformattedDate);
+                }
+            } catch(ParseException e) {
+            }
+
+        }
+
+    }
 }
