@@ -48,7 +48,8 @@
             android:name="nl.pilight.illumina.activity.LocationListActivity"
             android:configChanges="orientation|screenSize"
             android:launchMode="singleTask"
-            android:label="@string/app_name" />
+            android:label="@string/app_name"
+            android:hardwareAccelerated="false"/>
 
         <activity
             android:name="nl.pilight.illumina.activity.PreferenceActivity"

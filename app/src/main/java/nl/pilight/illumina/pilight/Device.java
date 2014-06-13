@@ -59,6 +59,7 @@ public class Device implements Parcelable {
     private int mMinInterval;
     private int mPollInterval;
     private String mValue;
+    private String mState;
     private DeviceTypes mType = DeviceTypes.UNKNOWN;
     private int mDimLevel;
     private int mTemperature;
@@ -121,6 +122,10 @@ public class Device implements Parcelable {
 
     public void setValue(String value) {
         mValue = value;
+    }
+
+    public void setState(String state) {
+        mState = state;
     }
 
     public DeviceTypes getType() {
@@ -311,19 +316,21 @@ public class Device implements Parcelable {
     }
 
     public boolean isOn() {
-        return TextUtils.equals(mValue, VALUE_ON);
+        return TextUtils.equals(mState, VALUE_ON);
     }
 
     public boolean isUp() {
-        return TextUtils.equals(mValue, VALUE_UP);
+        return TextUtils.equals(mState, VALUE_UP);
     }
 
+    public String getState() { return mState; }
+
     public boolean isOpened() {
-        return TextUtils.equals(mValue, VALUE_OPENED);
+        return TextUtils.equals(mState, VALUE_OPENED);
     }
 
     public boolean isClosed() {
-        return TextUtils.equals(mValue, VALUE_CLOSED);
+        return TextUtils.equals(mState, VALUE_CLOSED);
     }
 
     public void setYear(int year) { mYear = year; }
@@ -367,6 +374,7 @@ public class Device implements Parcelable {
         mTimestamp = parcel.readInt();
         mPollInterval = parcel.readInt();
         mValue = parcel.readString();
+        mState = parcel.readString();
         mAll = Boolean.parseBoolean(parcel.readString());
         mType = DeviceTypes.values()[parcel.readInt()];
         mDimLevel = parcel.readInt();
@@ -408,6 +416,7 @@ public class Device implements Parcelable {
         parcel.writeInt(mMinInterval);
         parcel.writeInt(mPollInterval);
         parcel.writeString(mValue);
+        parcel.writeString(mState);
         parcel.writeString(mAll ? "true" : "false");
         parcel.writeInt(mType.ordinal());
         parcel.writeInt(mDimLevel);
@@ -454,6 +463,7 @@ public class Device implements Parcelable {
             case DIMMER:
             case SCREEN:
             case SWITCH:
+            case PENDINGSW:
                 return !mIsReadOnly;
 
             case WEATHER:

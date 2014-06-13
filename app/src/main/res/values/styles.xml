@@ -23,5 +23,6 @@
     <style name="ActionBarHorizontalProgressStyle" parent="Widget.AppCompat.ProgressBar.Horizontal">
         <item name="android:layout_marginBottom">-8dp</item>
     </style>
+    <style name="Widget.GifMoviewView" parent="@android:style/Widget"></style>
 
 </resources>

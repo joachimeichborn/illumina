@@ -30,6 +30,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,6 +56,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import nl.pilight.illumina.R;
+import nl.pilight.illumina.layouts.GifView;
 import nl.pilight.illumina.pilight.Device;
 
 public class DeviceAdapter extends ArrayAdapter<Device> {
@@ -135,6 +137,11 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
                 case SWITCH:
                     view = inflater.inflate(R.layout.device_list_item_switch, parent, false);
                     viewHolder = new SwitchViewHolder(view);
+                    break;
+
+                case PENDINGSW:
+                    view = inflater.inflate(R.layout.device_list_item_switch, parent, false);
+                    viewHolder = new PendingSwitchViewHolder(view);
                     break;
 
                 case CONTACT:
@@ -266,6 +273,38 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 
             mCheckBox.setChecked(device.isOn());
             mCheckBox.setEnabled(device.isWritable());
+        }
+
+    }
+
+    private static class PendingSwitchViewHolder extends DeviceViewHolder {
+
+        private CheckBox mCheckBox;
+        private GifView mLoader;
+
+        PendingSwitchViewHolder(View view) {
+            super(view);
+            mCheckBox = (CheckBox) view.findViewById(android.R.id.checkbox);
+            mLoader = (GifView) view.findViewById(R.id.loader);
+        }
+
+        void setDevice(Device device) {
+            super.setDevice(device);
+            if (TextUtils.equals(device.getState(), "running")) {
+                mLoader.setVisibility(mLoader.INVISIBLE);
+                mCheckBox.setVisibility(mCheckBox.VISIBLE);
+                mCheckBox.setChecked(true);
+                mCheckBox.setEnabled(device.isWritable());
+            } else if (TextUtils.equals(device.getState(), "pending")) {
+                mCheckBox.setVisibility(mCheckBox.INVISIBLE);
+                mLoader.setVisibility(mLoader.VISIBLE);
+                mCheckBox.setEnabled(false);
+            } else if (TextUtils.equals(device.getState(), "stopped")) {
+                mCheckBox.setVisibility(mCheckBox.VISIBLE);
+                mLoader.setVisibility(mLoader.INVISIBLE);
+                mCheckBox.setChecked(false);
+                mCheckBox.setEnabled(device.isWritable());
+            }
         }
 
     }

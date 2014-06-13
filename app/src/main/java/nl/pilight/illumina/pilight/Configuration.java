@@ -125,7 +125,7 @@ public class Configuration extends LinkedHashMap<String, Location> {
                     break;
 
                 case "state":
-                    device.setValue(jsonDevice.optString(currentDeviceAttribute));
+                    device.setState(jsonDevice.optString(currentDeviceAttribute));
                     break;
 
                 case "dimlevel":
@@ -161,6 +161,9 @@ public class Configuration extends LinkedHashMap<String, Location> {
                             break;
                         case 6:
                             device.setType(Device.DeviceTypes.CONTACT);
+                            break;
+                        case 7:
+                            device.setType(Device.DeviceTypes.PENDINGSW);
                             break;
                         case 8:
                             device.setType(Device.DeviceTypes.DATETIME);
@@ -291,7 +294,7 @@ public class Configuration extends LinkedHashMap<String, Location> {
                     break;
 
                 case "state":
-                    device.setValue(jsonValues.getString(valueKey));
+                    device.setState(jsonValues.getString(valueKey));
                     break;
 
                 case "dimlevel":
