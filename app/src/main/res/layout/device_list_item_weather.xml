@@ -186,7 +186,7 @@
                     android:src="?attr/update"
                     android:layout_gravity="center"
                     android:scaleType="centerCrop"
-                    android:background="#000000" />
+                    android:background="@null" />
 
             </LinearLayout>
 
