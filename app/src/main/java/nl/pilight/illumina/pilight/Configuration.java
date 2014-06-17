@@ -39,6 +39,8 @@ public class Configuration extends LinkedHashMap<String, Location> {
 
     public static final Logger log = LoggerFactory.getLogger(Configuration.class);
 
+    private long mServerTimeDifference = 0;
+
     private final RemoteChangeHandler mRemoteChangeHandler;
 
     public interface RemoteChangeHandler {
@@ -48,9 +50,10 @@ public class Configuration extends LinkedHashMap<String, Location> {
     }
 
     private Configuration(RemoteChangeHandler handler,
-                          JSONObject locationsJson) throws JSONException {
+                          JSONObject locationsJson, long diff) throws JSONException {
 
         mRemoteChangeHandler = handler;
+        mServerTimeDifference = diff;
 
         final Iterator locationsJsonIterator = locationsJson.keys();
         final Map<String, Location> unsortedLocations = new HashMap<>();
@@ -110,6 +113,8 @@ public class Configuration extends LinkedHashMap<String, Location> {
 
     private Device parseDevice(JSONObject jsonDevice) throws JSONException {
         final Device device = new Device();
+
+        device.setTimeDifference(mServerTimeDifference);
         final Iterator deviceJsonIterator = jsonDevice.keys();
 
         while (deviceJsonIterator.hasNext()) {
@@ -168,6 +173,9 @@ public class Configuration extends LinkedHashMap<String, Location> {
                         case 8:
                             device.setType(Device.DeviceTypes.DATETIME);
                             break;
+                        case 9:
+                            device.setType(Device.DeviceTypes.XBMC);
+                            break;
                         default:
                             device.setType(Device.DeviceTypes.UNKNOWN);
                             break;
@@ -222,6 +230,14 @@ public class Configuration extends LinkedHashMap<String, Location> {
                     device.setSecond(jsonDevice.optInt(currentDeviceAttribute));
                     break;
 
+                case "media":
+                    device.setMedia(jsonDevice.optString(currentDeviceAttribute));
+                    break;
+
+                case "action":
+                    device.setAction(jsonDevice.optString(currentDeviceAttribute));
+                    break;
+
                 /* Device GUI settings */
                 case "gui-show-battery":
                     device.setShowBattery(jsonDevice.optInt(currentDeviceAttribute) == 1);
@@ -237,6 +253,14 @@ public class Configuration extends LinkedHashMap<String, Location> {
 
                 case "gui-show-sunriseset":
                     device.setShowSunriseset(jsonDevice.optInt(currentDeviceAttribute) == 1);
+                    break;
+
+                case "gui-show-media":
+                    device.setShowMedia(jsonDevice.optInt(currentDeviceAttribute) == 1);
+                    break;
+
+                case "gui-show-action":
+                    device.setShowAction(jsonDevice.optInt(currentDeviceAttribute) == 1);
                     break;
 
                 case "gui-show-update":
@@ -337,6 +361,14 @@ public class Configuration extends LinkedHashMap<String, Location> {
                     device.setSecond(jsonValues.optInt(valueKey));
                     break;
 
+                case "action":
+                    device.setAction(jsonValues.optString(valueKey));
+                    break;
+
+                case "media":
+                    device.setMedia(jsonValues.optString(valueKey));
+                    break;
+
                 default:
                     log.info("device value ignored: " + valueKey);
                     break;
@@ -372,8 +404,8 @@ public class Configuration extends LinkedHashMap<String, Location> {
         }
     }
 
-    public static Configuration create(RemoteChangeHandler handler, JSONObject json) throws JSONException {
-        return new Configuration(handler, json);
+    public static Configuration create(RemoteChangeHandler handler, JSONObject json, long diff) throws JSONException {
+        return new Configuration(handler, json, diff);
     }
 
     public void update(JSONObject json) {
@@ -393,4 +425,11 @@ public class Configuration extends LinkedHashMap<String, Location> {
         }
     }
 
+    public long getServerTimeDifference() {
+        return mServerTimeDifference;
+    }
+
+    public void setServerTimeDifference(long diff) {
+        mServerTimeDifference = diff;
+    }
 }

@@ -60,9 +60,14 @@ public class Device implements Parcelable {
     private int mPollInterval;
     private String mValue;
     private String mState;
+    private String mMedia;
+    private String mAction;
     private DeviceTypes mType = DeviceTypes.UNKNOWN;
     private int mDimLevel;
     private int mTemperature;
+    private long mTimeDifference;
+    private boolean mShowMedia;
+    private boolean mShowAction;
     private boolean mShowTemperature;
     private boolean mHasDateTimeFormat;
     private int mHumidity;
@@ -178,6 +183,8 @@ public class Device implements Parcelable {
 
     public int getMinInterval() { return mMinInterval; }
 
+    public long getTimeDifference() { return mTimeDifference; }
+
     public int getYear() { return mYear; }
 
     public int getMonth() { return mMonth; }
@@ -189,6 +196,10 @@ public class Device implements Parcelable {
     public int getMinute() { return mMinute; }
 
     public int getSecond() { return mSecond; }
+
+    public String getMedia() { return mMedia; }
+
+    public String getAction() { return mAction; }
 
     public String getDateTimeFormat() { return mDateTimeFormat; }
 
@@ -219,12 +230,22 @@ public class Device implements Parcelable {
 
     public void setMinInterval(int mininterval) { mMinInterval = mininterval; }
 
+    public void setTimeDifference(long diff) { mTimeDifference = diff; }
+
     public boolean isShowTemperature() {
         return mShowTemperature;
     }
 
     public boolean isShowSunriseset() {
         return mShowSunriseset;
+    }
+
+    public boolean isShowMedia() {
+        return mShowMedia;
+    }
+
+    public boolean isShowAction() {
+        return mShowAction;
     }
 
     public boolean isShowBattery() {
@@ -299,6 +320,14 @@ public class Device implements Parcelable {
         mShowUpdate = showUpdate;
     }
 
+    public void setShowMedia (boolean showMedia) {
+        mShowMedia = showMedia;
+    }
+
+    public void setShowAction (boolean showAction) {
+        mShowAction = showAction;
+    }
+
     public int getGUIDecimals() {
         return mGUIDecimals;
     }
@@ -345,6 +374,10 @@ public class Device implements Parcelable {
 
     public void setSecond(int second) { mSecond = second; }
 
+    public void setMedia(String media) { mMedia = media; }
+
+    public void setAction(String action) { mAction = action; }
+
     public void setDateTimeFormat(String datetimeformat) {
         mHasDateTimeFormat = true;
         mDateTimeFormat = datetimeformat;
@@ -370,8 +403,8 @@ public class Device implements Parcelable {
         mLocationId = parcel.readString();
         mName = parcel.readString();
         mOrder = parcel.readInt();
-        mMinInterval = parcel.readInt();
         mTimestamp = parcel.readInt();
+        mMinInterval = parcel.readInt();
         mPollInterval = parcel.readInt();
         mValue = parcel.readString();
         mState = parcel.readString();
@@ -388,9 +421,12 @@ public class Device implements Parcelable {
         mHour = parcel.readInt();
         mMinute = parcel.readInt();
         mSecond = parcel.readInt();
+        mMedia = parcel.readString();
+        mAction = parcel.readString();
         mGUIDecimals = parcel.readInt();
         mDeviceDecimals = parcel.readInt();
         mDateTimeFormat = parcel.readString();
+        mTimeDifference = parcel.readLong();
         mHasDateTimeFormat = Boolean.parseBoolean(parcel.readString());
         mHasHealthyBattery = Boolean.parseBoolean(parcel.readString());
         mShowTemperature = Boolean.parseBoolean(parcel.readString());
@@ -398,6 +434,8 @@ public class Device implements Parcelable {
         mShowBattery = Boolean.parseBoolean(parcel.readString());
         mShowSunriseset = Boolean.parseBoolean(parcel.readString());
         mShowUpdate = Boolean.parseBoolean(parcel.readString());
+        mShowMedia = Boolean.parseBoolean(parcel.readString());
+        mShowAction = Boolean.parseBoolean(parcel.readString());
         mHasBatteryValue = Boolean.parseBoolean(parcel.readString());
         mHasHumidityValue = Boolean.parseBoolean(parcel.readString());
         mHasTemperatureValue = Boolean.parseBoolean(parcel.readString());
@@ -430,9 +468,12 @@ public class Device implements Parcelable {
         parcel.writeInt(mHour);
         parcel.writeInt(mMinute);
         parcel.writeInt(mSecond);
+        parcel.writeString(mMedia);
+        parcel.writeString(mAction);
         parcel.writeInt(mGUIDecimals);
         parcel.writeInt(mDeviceDecimals);
         parcel.writeString(mDateTimeFormat);
+        parcel.writeLong(mTimeDifference);
         parcel.writeString(mHasDateTimeFormat ? "true" : "false");
         parcel.writeString(mHasHealthyBattery ? "true" : "false");
         parcel.writeString(mShowTemperature ? "true" : "false");
@@ -440,6 +481,8 @@ public class Device implements Parcelable {
         parcel.writeString(mShowBattery ? "true" : "false");
         parcel.writeString(mShowSunriseset ? "true" : "false");
         parcel.writeString(mShowUpdate ? "true" : "false");
+        parcel.writeString(mShowMedia ? "true" : "false");
+        parcel.writeString(mShowAction ? "true" : "false");
         parcel.writeString(mHasBatteryValue ? "true" : "false");
         parcel.writeString(mHasHumidityValue ? "true" : "false");
         parcel.writeString(mHasTemperatureValue ? "true" : "false");
