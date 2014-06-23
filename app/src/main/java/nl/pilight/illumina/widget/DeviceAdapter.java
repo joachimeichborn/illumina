@@ -40,6 +40,7 @@ import android.widget.CheckBox;
 import android.widget.Filter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -58,6 +59,7 @@ import java.util.TimerTask;
 import nl.pilight.illumina.R;
 import nl.pilight.illumina.layouts.GifView;
 import nl.pilight.illumina.pilight.Device;
+import nl.pilight.illumina.service.PilightServiceImpl;
 
 public class DeviceAdapter extends ArrayAdapter<Device> {
 
@@ -167,6 +169,11 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
                 case DATETIME:
                     view = inflater.inflate(R.layout.device_list_item_datetime, parent, false);
                     viewHolder = new DateTimeViewHolder(view);
+                    break;
+
+                case XBMC:
+                    view = inflater.inflate(R.layout.device_list_item_xbmc, parent, false);
+                    viewHolder = new XBMCViewHolder(view);
                     break;
 
                 case UNKNOWN:
@@ -291,22 +298,100 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
         void setDevice(Device device) {
             super.setDevice(device);
             if (TextUtils.equals(device.getState(), "running")) {
-                mLoader.setVisibility(mLoader.INVISIBLE);
+                mLoader.setVisibility(mLoader.GONE);
                 mCheckBox.setVisibility(mCheckBox.VISIBLE);
                 mCheckBox.setChecked(true);
                 mCheckBox.setEnabled(device.isWritable());
             } else if (TextUtils.equals(device.getState(), "pending")) {
-                mCheckBox.setVisibility(mCheckBox.INVISIBLE);
+                mCheckBox.setVisibility(mCheckBox.GONE);
                 mLoader.setVisibility(mLoader.VISIBLE);
                 mCheckBox.setEnabled(false);
             } else if (TextUtils.equals(device.getState(), "stopped")) {
                 mCheckBox.setVisibility(mCheckBox.VISIBLE);
-                mLoader.setVisibility(mLoader.INVISIBLE);
+                mLoader.setVisibility(mLoader.GONE);
                 mCheckBox.setChecked(false);
                 mCheckBox.setEnabled(device.isWritable());
             }
         }
 
+    }
+
+    private static class XBMCViewHolder extends DeviceViewHolder {
+        private ImageView mMovie;
+        private ImageView mEpisode;
+        private ImageView mMusic;
+        private ImageView mAScreen;
+        private ImageView mIScreen;
+        private ImageView mStop;
+        private ImageView mPause;
+        private ImageView mHome;
+        private ImageView mShutdown;
+        private ImageView mPlay;
+
+        XBMCViewHolder(View view) {
+            super(view);
+
+            mMovie = (ImageView) view.findViewById(R.id.movie_image);
+            mEpisode = (ImageView) view.findViewById(R.id.episode_image);
+            mMusic = (ImageView) view.findViewById(R.id.music_image);
+            mAScreen = (ImageView) view.findViewById(R.id.screen_active_image);
+            mIScreen = (ImageView) view.findViewById(R.id.screen_inactive_image);
+            mStop = (ImageView) view.findViewById(R.id.stop_image);
+            mPause = (ImageView) view.findViewById(R.id.pause_image);
+            mHome = (ImageView) view.findViewById(R.id.home_image);
+            mShutdown = (ImageView) view.findViewById(R.id.shutdown_image);
+            mPlay = (ImageView) view.findViewById(R.id.play_image);
+        }
+
+        void setDevice(Device device) {
+            super.setDevice(device);
+
+            mMovie.setVisibility(mMovie.GONE);
+            mEpisode.setVisibility(mEpisode.GONE);
+            mMusic.setVisibility(mMusic.GONE);
+            mAScreen.setVisibility(mAScreen.GONE);
+            mIScreen.setVisibility(mIScreen.GONE);
+            mStop.setVisibility(mStop.GONE);
+            mPause.setVisibility(mPause.GONE);
+            mHome.setVisibility(mHome.GONE);
+            mShutdown.setVisibility(mShutdown.GONE);
+            mPlay.setVisibility(mPlay.GONE);
+
+            if(device.isShowMedia()) {
+                if (TextUtils.equals(device.getMedia(), "movie")) {
+                    mMovie.setVisibility(mMovie.VISIBLE);
+                }
+                if (TextUtils.equals(device.getMedia(), "episode")) {
+                    mEpisode.setVisibility(mEpisode.VISIBLE);
+                }
+                if (TextUtils.equals(device.getMedia(), "song")) {
+                    mMusic.setVisibility(mMusic.VISIBLE);
+                }
+            }
+            if(device.isShowAction()) {
+                if (TextUtils.equals(device.getAction(), "home")) {
+                    mHome.setVisibility(mHome.VISIBLE);
+                }
+                if (TextUtils.equals(device.getAction(), "shutdown")) {
+                    mShutdown.setVisibility(mShutdown.VISIBLE);
+                }
+                if (TextUtils.equals(device.getAction(), "play")) {
+                    mPlay.setVisibility(mPlay.VISIBLE);
+                }
+                if (TextUtils.equals(device.getAction(), "pause")) {
+                    mPause.setVisibility(mPause.VISIBLE);
+                }
+                if (TextUtils.equals(device.getAction(), "stop")) {
+                    mStop.setVisibility(mStop.VISIBLE);
+                }
+                if (TextUtils.equals(device.getAction(), "active")) {
+                    mAScreen.setVisibility(mAScreen.VISIBLE);
+                }
+                if (TextUtils.equals(device.getAction(), "inactive")) {
+                    mIScreen.setVisibility(mIScreen.VISIBLE);
+                }
+            }
+        }
     }
 
     private static class UnknownViewHolder extends DeviceViewHolder {
@@ -425,6 +510,7 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
         private final ImageView mBatteryImage;
         private final ViewGroup mUpdate;
         private final ImageButton mUpdateBtn;
+        private boolean mHandlerActive = false;
 
         private long mTimestamp;
 
@@ -434,6 +520,8 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 
         private static Drawable sBatteryFullDrawable;
         private static Drawable sBatteryEmptyDrawable;
+
+        private Handler handler = new Handler();
 
         WeatherViewHolder(View view) {
             super(view);
@@ -456,14 +544,37 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
             mUpdate = (ViewGroup) view.findViewById(R.id.update);
             mUpdateBtn = (ImageButton) view.findViewById(R.id.update_btn);
 
-            Calendar calender = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-            mTimestamp = calender.getTimeInMillis()/1000;
+            mUpdateBtn.setEnabled(false);
+            if(Build.VERSION.SDK_INT >= 11) {
+                mUpdateBtn.setAlpha((float)0.3);
+            } else {
+                AlphaAnimation alpha = new AlphaAnimation(0.3F, 0.3F);
+                alpha.setDuration(0);
+                alpha.setFillAfter(true);
+                mUpdateBtn.startAnimation(alpha);
+            }
         }
 
         static void setBatteryDrawables(Drawable full, Drawable empty) {
             sBatteryEmptyDrawable = empty;
             sBatteryFullDrawable = full;
         }
+
+        private Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                mUpdateBtn.setEnabled(true);
+                if(Build.VERSION.SDK_INT >= 11) {
+                    mUpdateBtn.setAlpha((float) 1);
+                } else {
+                    AlphaAnimation alpha = new AlphaAnimation(1F, 1F);
+                    alpha.setDuration(0);
+                    alpha.setFillAfter(true);
+                    mUpdateBtn.startAnimation(alpha);
+                }
+                mHandlerActive = false;
+            }
+        };
 
         void setDevice(Device device) {
             super.setDevice(device);
@@ -511,20 +622,24 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
                 mUpdateBtn.setOnClickListener((new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (mUpdateBtn.isEnabled()) {
-                            getDeviceChangeListener().onDeviceChange(getDevice(), Device.Properties.UPDATE.ordinal());
-                            mUpdateBtn.setEnabled(false);
-                            if(Build.VERSION.SDK_INT >= 11) {
-                                mUpdateBtn.setAlpha((float) 0.3);
-                            } else {
-                                AlphaAnimation alpha = new AlphaAnimation(0.3F, 0.3F);
-                                alpha.setDuration(0);
-                                alpha.setFillAfter(true);
-                                mUpdateBtn.startAnimation(alpha);
-                            }
+                    if (mUpdateBtn.isEnabled()) {
+                        getDeviceChangeListener().onDeviceChange(getDevice(), Device.Properties.UPDATE.ordinal());
+                        mUpdateBtn.setEnabled(false);
+                        if(Build.VERSION.SDK_INT >= 11) {
+                            mUpdateBtn.setAlpha((float) 0.3);
+                        } else {
+                            AlphaAnimation alpha = new AlphaAnimation(0.3F, 0.3F);
+                            alpha.setDuration(0);
+                            alpha.setFillAfter(true);
+                            mUpdateBtn.startAnimation(alpha);
                         }
                     }
+                    }
                 }));
+
+                Calendar calender = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+                long mTimestamp = (calender.getTimeInMillis()/1000) - device.getTimeDifference();
+
                 if((mTimestamp-device.getTimestamp()) <= device.getMinInterval()) {
                     if(mUpdateBtn.isEnabled()) {
                         mUpdateBtn.setEnabled(false);
@@ -539,6 +654,11 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
                     }
                 }
 
+                if(!mHandlerActive) {
+                    mHandlerActive = true;
+                    handler.removeCallbacks(runnable);
+                    handler.postDelayed(runnable, (device.getMinInterval() - (mTimestamp - device.getTimestamp()))*1000);
+                }
             } else {
                 mUpdate.setVisibility(View.GONE);
             }

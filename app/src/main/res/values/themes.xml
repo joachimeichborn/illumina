@@ -29,6 +29,16 @@
         <item name="sunrise">@drawable/sunrise_dark</item>
         <item name="sunset">@drawable/sunset_dark</item>
         <item name="update">@drawable/update_dark</item>
+        <item name="screen_active">@drawable/screen_active_dark</item>
+        <item name="screen_inactive">@drawable/screen_inactive_dark</item>
+        <item name="movie">@drawable/movie_dark</item>
+        <item name="music">@drawable/music_dark</item>
+        <item name="episode">@drawable/episode_dark</item>
+        <item name="home">@drawable/home_dark</item>
+        <item name="shutdown">@drawable/shutdown_dark</item>
+        <item name="pause">@drawable/pause_dark</item>
+        <item name="play">@drawable/play_dark</item>
+        <item name="stop">@drawable/stop_dark</item>
         <item name="search_action_icon">@drawable/ic_action_search_dark</item>
         <item name="connect_action_icon">@drawable/ic_action_connect_dark</item>
         <item name="up_action">@drawable/ic_action_up_dark</item>

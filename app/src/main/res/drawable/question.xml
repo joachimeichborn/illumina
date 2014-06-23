@@ -19,4 +19,4 @@
 -->
 
 <bitmap xmlns:android="http://schemas.android.com/apk/res/android"
-    android:src="@drawable/question_en" />
+    android:src="@drawable/logo" />

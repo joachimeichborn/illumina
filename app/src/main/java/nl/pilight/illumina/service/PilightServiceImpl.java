@@ -35,7 +35,11 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 import nl.pilight.Illumina;
 import nl.pilight.illumina.communication.StreamingSocket;
@@ -226,11 +230,23 @@ public class PilightServiceImpl extends Service implements PilightService, Confi
 
     private void onPilightConfigResponse(JSONObject json) {
         log.info("pilight config response");
+        long mTimeDifference = 0;
 
+        if (!json.isNull("timestamp")) {
+            try {
+                long mServerTimestamp = json.getLong("timestamp");
+                Calendar calender = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+                long currentTime = calender.getTimeInMillis()/1000;
+                mTimeDifference = currentTime - mServerTimestamp;
+
+            } catch (JSONException exception) {
+                log.info("- error reading server timestamp " + exception.getMessage());
+            }
+        }
         if (!json.isNull("config")) {
             try {
                 mPilight.startHeartBeat();
-                mConfiguration = Configuration.create(this, json.getJSONObject("config"));
+                mConfiguration = mConfiguration.create(this, json.getJSONObject("config"), mTimeDifference);
 
                 if (!mCurrentlyTriesReconnecting) {
                     sendBroadcast(News.CONNECTED);

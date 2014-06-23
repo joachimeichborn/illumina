@@ -182,11 +182,12 @@
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:adjustViewBounds="false"
-                    android:alpha="0.7"
+                    android:alpha="0.3"
                     android:src="?attr/update"
                     android:layout_gravity="center"
                     android:scaleType="centerCrop"
-                    android:background="@null" />
+                    android:background="@null"
+                    android:enabled="false" />
 
             </LinearLayout>
 
