@@ -35,6 +35,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.Filter;
@@ -502,26 +505,26 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
         private final TextView mTemperatureText;
         private final ViewGroup mHumidity;
         private final TextView mHumidityText;
+        private final ViewGroup mWindgust;
+        private final TextView mWindgustText;
+        private final ViewGroup mWindavg;
+        private final TextView mWindavgText;
         private final ViewGroup mSunrise;
         private final TextView mSunriseText;
         private final ViewGroup mSunset;
         private final TextView mSunsetText;
         private final ViewGroup mBattery;
         private final ImageView mBatteryImage;
+        private final ViewGroup mWinddir;
+        private final ImageView mWinddirImage;
+        private int mOldWinddir;
         private final ViewGroup mUpdate;
         private final ImageButton mUpdateBtn;
-        private boolean mHandlerActive = false;
 
-        private long mTimestamp;
-
-        private final DecimalFormat temperatureFormat = new DecimalFormat("#°");
-        private final DecimalFormat humidityFormat = new DecimalFormat("#%");
         private final DecimalFormat timeFormat = new DecimalFormat("00");
 
         private static Drawable sBatteryFullDrawable;
         private static Drawable sBatteryEmptyDrawable;
-
-        private Handler handler = new Handler();
 
         WeatherViewHolder(View view) {
             super(view);
@@ -531,6 +534,15 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 
             mHumidity = (ViewGroup) view.findViewById(R.id.humidity);
             mHumidityText = (TextView) view.findViewById(R.id.humidity_text);
+
+            mWindgust = (ViewGroup) view.findViewById(R.id.windgust);
+            mWindgustText = (TextView) view.findViewById(R.id.windgust_text);
+
+            mWindavg = (ViewGroup) view.findViewById(R.id.windavg);
+            mWindavgText = (TextView) view.findViewById(R.id.windavg_text);
+
+            mWinddir = (ViewGroup) view.findViewById(R.id.winddir);
+            mWinddirImage = (ImageView) view.findViewById(R.id.winddir_image);
 
             mBattery = (ViewGroup) view.findViewById(R.id.battery);
             mBatteryImage = (ImageView) view.findViewById(R.id.battery_image);
@@ -553,6 +565,8 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
                 alpha.setFillAfter(true);
                 mUpdateBtn.startAnimation(alpha);
             }
+
+            mOldWinddir = 0;
         }
 
         static void setBatteryDrawables(Drawable full, Drawable empty) {
@@ -560,29 +574,12 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
             sBatteryFullDrawable = full;
         }
 
-        private Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                mUpdateBtn.setEnabled(true);
-                if(Build.VERSION.SDK_INT >= 11) {
-                    mUpdateBtn.setAlpha((float) 1);
-                } else {
-                    AlphaAnimation alpha = new AlphaAnimation(1F, 1F);
-                    alpha.setDuration(0);
-                    alpha.setFillAfter(true);
-                    mUpdateBtn.startAnimation(alpha);
-                }
-                mHandlerActive = false;
-            }
-        };
-
         void setDevice(Device device) {
             super.setDevice(device);
 
             if (device.hasTemperatureValue() && device.isShowTemperature()) {
                 mTemperature.setVisibility(View.VISIBLE);
-                mTemperatureText.setText(temperatureFormat.format(
-                        (device.getTemperature() / Math.pow(10, device.getDeviceDecimals()))));
+                mTemperatureText.setText(device.getTemperature()+"°");
             } else {
                 mTemperature.setVisibility(View.GONE);
             }
@@ -590,12 +587,8 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
             if (device.hasSunriseValue() && device.hasSunsetValue() && device.isShowSunriseset()) {
                 mSunrise.setVisibility(View.VISIBLE);
                 mSunset.setVisibility(View.VISIBLE);
-                int hour = device.getSunrise() / 100;
-                int min = (device.getSunrise() - (hour*100));
-                mSunriseText.setText(timeFormat.format(Double.valueOf(hour)) + ":" + timeFormat.format(Double.valueOf(min)));
-                hour = device.getSunset() / 100;
-                min = (device.getSunset() - (hour*100));
-                mSunsetText.setText(timeFormat.format(Double.valueOf(hour)) + ":" + timeFormat.format(Double.valueOf(min)));
+                mSunriseText.setText(Double.toString(device.getSunrise()).replace(".", ":"));
+                mSunsetText.setText(Double.toString(device.getSunset()).replace(".", ":"));
             } else {
                 mSunrise.setVisibility(View.GONE);
                 mSunset.setVisibility(View.GONE);
@@ -603,10 +596,40 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 
             if (device.hasHumidityValue() && device.isShowHumidity()) {
                 mHumidity.setVisibility(View.VISIBLE);
-                mHumidityText.setText(humidityFormat.format(
-                        (device.getHumidity() / Math.pow(10, device.getDeviceDecimals()) / 100)));
+                mHumidityText.setText(device.getHumidity()+"%");
             } else {
                 mHumidity.setVisibility(View.GONE);
+            }
+
+            if (device.hasWinddirValue() && device.isShowWinddir()) {
+                mWinddir.setVisibility(View.VISIBLE);
+                if (Build.VERSION.SDK_INT < 11) {
+                    RotateAnimation animation = new RotateAnimation(mOldWinddir, device.getWinddir(),
+                            Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                    animation.setInterpolator(new LinearInterpolator());
+                    animation.setDuration(1);
+                    animation.setFillAfter(true);
+                    mWinddirImage.startAnimation(animation);
+                    mOldWinddir = device.getWinddir();
+                } else {
+                    mWinddirImage.setRotation(device.getWinddir());
+                }
+            } else {
+                mWinddir.setVisibility(View.GONE);
+            }
+
+            if (device.hasWindgustValue() && device.isShowWindgust()) {
+                mWindgust.setVisibility(View.VISIBLE);
+                mWindgustText.setText(String.valueOf(device.getWindgust()));
+            } else {
+                mWindgust.setVisibility(View.GONE);
+            }
+
+            if (device.hasWindavgValue() && device.isShowWindavg()) {
+                mWindavg.setVisibility(View.VISIBLE);
+                mWindavgText.setText(String.valueOf(device.getWindavg()));
+            } else {
+                mWindavg.setVisibility(View.GONE);
             }
 
             if (device.hasBatteryValue() && device.isShowBattery()) {
@@ -636,11 +659,7 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
                     }
                     }
                 }));
-
-                Calendar calender = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-                long mTimestamp = (calender.getTimeInMillis()/1000) - device.getTimeDifference();
-
-                if((mTimestamp-device.getTimestamp()) <= device.getMinInterval()) {
+                if(!device.getUpdate()) {
                     if(mUpdateBtn.isEnabled()) {
                         mUpdateBtn.setEnabled(false);
                         if(Build.VERSION.SDK_INT >= 11) {
@@ -652,12 +671,18 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
                             mUpdateBtn.startAnimation(alpha);
                         }
                     }
-                }
-
-                if(!mHandlerActive) {
-                    mHandlerActive = true;
-                    handler.removeCallbacks(runnable);
-                    handler.postDelayed(runnable, (device.getMinInterval() - (mTimestamp - device.getTimestamp()))*1000);
+                } else {
+                    if(!mUpdateBtn.isEnabled()) {
+                        mUpdateBtn.setEnabled(true);
+                        if(Build.VERSION.SDK_INT >= 11) {
+                            mUpdateBtn.setAlpha((float) 1);
+                        } else {
+                            AlphaAnimation alpha = new AlphaAnimation(1F, 1F);
+                            alpha.setDuration(0);
+                            alpha.setFillAfter(true);
+                            mUpdateBtn.startAnimation(alpha);
+                        }
+                    }
                 }
             } else {
                 mUpdate.setVisibility(View.GONE);

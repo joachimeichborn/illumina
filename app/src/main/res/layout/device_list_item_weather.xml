@@ -102,6 +102,81 @@
             </LinearLayout>
 
             <LinearLayout
+            android:id="@+id/windavg"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/windavg_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@android:style/TextAppearance.Large"
+                android:gravity="center_vertical|right"
+                android:text="@string/windavg_placeholder"
+                android:layout_gravity="right" />
+
+            <ImageView
+                android:id="@+id/windavg_image"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:adjustViewBounds="false"
+                android:alpha="0.7"
+                android:src="?attr/windavg"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="center_vertical|top" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/windgust"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/windgust_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@android:style/TextAppearance.Large"
+                    android:gravity="center_vertical|right"
+                    android:text="@string/windgust_placeholder"
+                    android:layout_gravity="right" />
+
+                <ImageView
+                    android:id="@+id/windgust_image"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:adjustViewBounds="false"
+                    android:alpha="0.7"
+                    android:src="?attr/windgust"
+                    android:layout_alignParentRight="true"
+                    android:layout_gravity="center_vertical|top" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/winddir"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_horizontal|top">
+
+                <ImageView
+                    android:id="@+id/winddir_image"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:adjustViewBounds="false"
+                    android:alpha="0.7"
+                    android:rotation="0"
+                    android:pivotX="50%"
+                    android:pivotY="50%"
+                    android:src="?attr/winddir"
+                    android:layout_gravity="center_horizontal|top" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/temperature"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -118,13 +193,14 @@
 
                 <ImageView
                     android:id="@+id/temperature_image"
-                    android:layout_width="28dp"
+                    android:layout_width="14dp"
                     android:layout_height="28dp"
                     android:adjustViewBounds="false"
                     android:alpha="0.7"
                     android:src="?attr/thermometer"
                     android:layout_alignParentRight="true"
-                    android:layout_gravity="center_vertical|top" />
+                    android:layout_gravity="center_vertical|top"
+                    android:layout_marginRight="5dp" />
 
             </LinearLayout>
 

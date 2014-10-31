@@ -56,29 +56,33 @@ public class Device implements Parcelable {
     private String mName;
     private int mOrder;
     private int mTimestamp;
-    private int mMinInterval;
-    private int mPollInterval;
     private String mValue;
     private String mState;
+    private boolean mAll;
     private String mMedia;
     private String mAction;
+    private boolean mUpdate;
     private DeviceTypes mType = DeviceTypes.UNKNOWN;
     private int mDimLevel;
     private int mTemperature;
-    private long mTimeDifference;
     private boolean mShowMedia;
     private boolean mShowAction;
     private boolean mShowTemperature;
     private boolean mHasDateTimeFormat;
     private int mHumidity;
+    private int mWindavg;
+    private int mWindgust;
+    private int mWinddir;
     private boolean mShowHumidity;
-    private int mSunrise;
-    private int mSunset;
+    private boolean mShowWindavg;
+    private boolean mShowWindgust;
+    private boolean mShowWinddir;
+    private double mSunrise;
+    private double mSunset;
     private boolean mShowSunriseset;
     private boolean mShowBattery;
     private boolean mShowUpdate;
     private int mGUIDecimals;
-    private int mDeviceDecimals;
     private int mYear;
     private int mMonth;
     private int mDay;
@@ -86,11 +90,13 @@ public class Device implements Parcelable {
     private int mMinute;
     private int mSecond;
     private String mDateTimeFormat;
-    private boolean mAll;
     private boolean mHasHealthyBattery;
     private boolean mHasBatteryValue = false;
     private boolean mHasTemperatureValue = false;
     private boolean mHasHumidityValue = false;
+    private boolean mHasWindavgValue = false;
+    private boolean mHasWindgustValue = false;
+    private boolean mHasWinddirValue = false;
     private boolean mHasSunriseValue = false;
     private boolean mHasSunsetValue = false;
     private boolean mIsReadOnly = false;
@@ -165,25 +171,13 @@ public class Device implements Parcelable {
         return mTemperature;
     }
 
-    public int getSunrise() {
+    public double getSunrise() {
         return mSunrise;
     }
 
-    public int getSunset() {
+    public double getSunset() {
         return mSunset;
     }
-
-    public int getTimestamp() {
-        return mTimestamp;
-    }
-
-    public int getPollInterval() {
-        return mPollInterval;
-    }
-
-    public int getMinInterval() { return mMinInterval; }
-
-    public long getTimeDifference() { return mTimeDifference; }
 
     public int getYear() { return mYear; }
 
@@ -201,6 +195,8 @@ public class Device implements Parcelable {
 
     public String getAction() { return mAction; }
 
+    public boolean getUpdate() { return mUpdate; }
+
     public String getDateTimeFormat() { return mDateTimeFormat; }
 
     public void setReadOnly(boolean readOnly) {
@@ -212,12 +208,12 @@ public class Device implements Parcelable {
         mTemperature = temperature;
     }
 
-    public void setSunrise(int sunrise) {
+    public void setSunrise(double sunrise) {
         mHasSunriseValue = true;
         mSunrise = sunrise;
     }
 
-    public void setSunset(int sunset) {
+    public void setSunset(double sunset) {
         mHasSunsetValue = true;
         mSunset = sunset;
     }
@@ -225,12 +221,6 @@ public class Device implements Parcelable {
     public void setTimestamp(int timestamp) {
         mTimestamp = timestamp;
     }
-
-    public void setPollInterval(int pollinterval) { mPollInterval = pollinterval; }
-
-    public void setMinInterval(int mininterval) { mMinInterval = mininterval; }
-
-    public void setTimeDifference(long diff) { mTimeDifference = diff; }
 
     public boolean isShowTemperature() {
         return mShowTemperature;
@@ -262,6 +252,18 @@ public class Device implements Parcelable {
 
     public boolean hasHumidityValue() {
         return mHasHumidityValue;
+    }
+
+    public boolean hasWindavgValue() {
+        return mHasWindavgValue;
+    }
+
+    public boolean hasWindgustValue() {
+        return mHasWindgustValue;
+    }
+
+    public boolean hasWinddirValue() {
+        return mHasWinddirValue;
     }
 
     public boolean hasSunriseValue() {
@@ -300,12 +302,61 @@ public class Device implements Parcelable {
         return mShowHumidity;
     }
 
+    public int getWindavg() {
+        return mWindavg;
+    }
+
+    public void setWindavg(int windavg) {
+        mHasWindavgValue = true;
+        mWindavg = windavg;
+    }
+
+    public boolean isShowWindavg() {
+        return mShowWindavg;
+    }
+
+    public int getWindgust() {
+        return mWindgust;
+    }
+
+    public void setWindgust(int windgust) {
+        mHasWindgustValue = true;
+        mWindgust = windgust;
+    }
+
+    public boolean isShowWindgust() {
+        return mShowWindgust;
+    }
+
+    public int getWinddir() {
+        return mWinddir;
+    }
+
+    public void setWinddir(int winddir) {
+        mHasWinddirValue = true;
+        mWinddir = winddir;
+    }
+
+    public boolean isShowWinddir() {
+        return mShowWinddir;
+    }
+
     public boolean isShowUpdate() {
         return mShowUpdate;
     }
 
     public void setShowHumidity(boolean showHumidity) {
         mShowHumidity = showHumidity;
+    }
+
+    public void setShowWindavg(boolean showWindavg) { mShowWindavg = showWindavg;    }
+
+    public void setShowWindgust(boolean showWindgust) {
+        mShowWindgust = showWindgust;
+    }
+
+    public void setShowWinddir(boolean showWinddir) {
+        mShowWinddir = showWinddir;
     }
 
     public void setShowBattery(boolean showBattery) {
@@ -334,14 +385,6 @@ public class Device implements Parcelable {
 
     public void setGUIDecimals(int decimals) {
         mGUIDecimals = decimals;
-    }
-
-    public int getDeviceDecimals() {
-        return mDeviceDecimals;
-    }
-
-    public void setDeviceDecimals(int decimals) {
-        mDeviceDecimals = decimals;
     }
 
     public boolean isOn() {
@@ -378,6 +421,8 @@ public class Device implements Parcelable {
 
     public void setAction(String action) { mAction = action; }
 
+    public void setUpdate(boolean update) { mUpdate = update; }
+
     public void setDateTimeFormat(String datetimeformat) {
         mHasDateTimeFormat = true;
         mDateTimeFormat = datetimeformat;
@@ -404,8 +449,6 @@ public class Device implements Parcelable {
         mName = parcel.readString();
         mOrder = parcel.readInt();
         mTimestamp = parcel.readInt();
-        mMinInterval = parcel.readInt();
-        mPollInterval = parcel.readInt();
         mValue = parcel.readString();
         mState = parcel.readString();
         mAll = Boolean.parseBoolean(parcel.readString());
@@ -413,8 +456,11 @@ public class Device implements Parcelable {
         mDimLevel = parcel.readInt();
         mTemperature = parcel.readInt();
         mHumidity = parcel.readInt();
-        mSunrise = parcel.readInt();
-        mSunset = parcel.readInt();
+        mWindavg = parcel.readInt();
+        mWindgust = parcel.readInt();
+        mWinddir = parcel.readInt();
+        mSunrise = parcel.readDouble();
+        mSunset = parcel.readDouble();
         mYear = parcel.readInt();
         mMonth = parcel.readInt();
         mDay = parcel.readInt();
@@ -423,14 +469,16 @@ public class Device implements Parcelable {
         mSecond = parcel.readInt();
         mMedia = parcel.readString();
         mAction = parcel.readString();
+        mUpdate = Boolean.parseBoolean(parcel.readString());
         mGUIDecimals = parcel.readInt();
-        mDeviceDecimals = parcel.readInt();
         mDateTimeFormat = parcel.readString();
-        mTimeDifference = parcel.readLong();
         mHasDateTimeFormat = Boolean.parseBoolean(parcel.readString());
         mHasHealthyBattery = Boolean.parseBoolean(parcel.readString());
         mShowTemperature = Boolean.parseBoolean(parcel.readString());
         mShowHumidity = Boolean.parseBoolean(parcel.readString());
+        mShowWindavg = Boolean.parseBoolean(parcel.readString());
+        mShowWindgust = Boolean.parseBoolean(parcel.readString());
+        mShowWinddir = Boolean.parseBoolean(parcel.readString());
         mShowBattery = Boolean.parseBoolean(parcel.readString());
         mShowSunriseset = Boolean.parseBoolean(parcel.readString());
         mShowUpdate = Boolean.parseBoolean(parcel.readString());
@@ -438,6 +486,9 @@ public class Device implements Parcelable {
         mShowAction = Boolean.parseBoolean(parcel.readString());
         mHasBatteryValue = Boolean.parseBoolean(parcel.readString());
         mHasHumidityValue = Boolean.parseBoolean(parcel.readString());
+        mHasWindavgValue = Boolean.parseBoolean(parcel.readString());
+        mHasWindgustValue = Boolean.parseBoolean(parcel.readString());
+        mHasWinddirValue = Boolean.parseBoolean(parcel.readString());
         mHasTemperatureValue = Boolean.parseBoolean(parcel.readString());
         mHasSunriseValue = Boolean.parseBoolean(parcel.readString());
         mHasSunsetValue = Boolean.parseBoolean(parcel.readString());
@@ -451,8 +502,6 @@ public class Device implements Parcelable {
         parcel.writeString(mName);
         parcel.writeInt(mOrder);
         parcel.writeInt(mTimestamp);
-        parcel.writeInt(mMinInterval);
-        parcel.writeInt(mPollInterval);
         parcel.writeString(mValue);
         parcel.writeString(mState);
         parcel.writeString(mAll ? "true" : "false");
@@ -460,8 +509,11 @@ public class Device implements Parcelable {
         parcel.writeInt(mDimLevel);
         parcel.writeInt(mTemperature);
         parcel.writeInt(mHumidity);
-        parcel.writeInt(mSunrise);
-        parcel.writeInt(mSunset);
+        parcel.writeInt(mWindavg);
+        parcel.writeInt(mWindgust);
+        parcel.writeInt(mWinddir);
+        parcel.writeDouble(mSunrise);
+        parcel.writeDouble(mSunset);
         parcel.writeInt(mYear);
         parcel.writeInt(mMonth);
         parcel.writeInt(mDay);
@@ -470,14 +522,16 @@ public class Device implements Parcelable {
         parcel.writeInt(mSecond);
         parcel.writeString(mMedia);
         parcel.writeString(mAction);
+        parcel.writeString(mUpdate ? "true" : "false");
         parcel.writeInt(mGUIDecimals);
-        parcel.writeInt(mDeviceDecimals);
         parcel.writeString(mDateTimeFormat);
-        parcel.writeLong(mTimeDifference);
         parcel.writeString(mHasDateTimeFormat ? "true" : "false");
         parcel.writeString(mHasHealthyBattery ? "true" : "false");
         parcel.writeString(mShowTemperature ? "true" : "false");
         parcel.writeString(mShowHumidity ? "true" : "false");
+        parcel.writeString(mShowWindavg ? "true" : "false");
+        parcel.writeString(mShowWindgust ? "true" : "false");
+        parcel.writeString(mShowWinddir ? "true" : "false");
         parcel.writeString(mShowBattery ? "true" : "false");
         parcel.writeString(mShowSunriseset ? "true" : "false");
         parcel.writeString(mShowUpdate ? "true" : "false");
@@ -485,6 +539,9 @@ public class Device implements Parcelable {
         parcel.writeString(mShowAction ? "true" : "false");
         parcel.writeString(mHasBatteryValue ? "true" : "false");
         parcel.writeString(mHasHumidityValue ? "true" : "false");
+        parcel.writeString(mHasWindavgValue ? "true" : "false");
+        parcel.writeString(mHasWindgustValue ? "true" : "false");
+        parcel.writeString(mHasWinddirValue ? "true" : "false");
         parcel.writeString(mHasTemperatureValue ? "true" : "false");
         parcel.writeString(mHasSunsetValue ? "true" : "false");
         parcel.writeString(mHasSunriseValue ? "true" : "false");

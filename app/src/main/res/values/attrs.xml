@@ -26,6 +26,9 @@
     <attr name="sunrise" format="reference" />
     <attr name="loader" format="reference" />
     <attr name="sunset" format="reference" />
+    <attr name="winddir" format="reference" />
+    <attr name="windgust" format="reference" />
+    <attr name="windavg" format="reference" />
     <attr name="humidity" format="reference" />
     <attr name="weather" format="reference" />
     <attr name="update" format="reference" />

@@ -30,6 +30,7 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.text.TextUtils;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -39,6 +40,9 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.TimeZone;
 
 import nl.pilight.Illumina;
@@ -63,6 +67,7 @@ public class PilightServiceImpl extends Service implements PilightService, Confi
         Disconnecting,
         HandshakePending,
         ConfigRequested,
+        ValuesRequested,
         Error
     }
 
@@ -156,9 +161,12 @@ public class PilightServiceImpl extends Service implements PilightService, Confi
         log.info("pilight connected, handshake initiated");
 
         final JSONObject json = new JSONObject();
+        final JSONObject joptions = new JSONObject();
 
         try {
-            json.put("message", "client gui");
+            json.put("action", "identify");
+            joptions.put("config", 1);
+            json.put("options", joptions);
         } catch (JSONException exception) {
             log.error("- error creating handshake message", exception);
         }
@@ -170,32 +178,107 @@ public class PilightServiceImpl extends Service implements PilightService, Confi
 
     private void onSocketMessage(String message) {
         JSONObject json = new JSONObject();
+        JSONObject request = null;
 
-        if (TextUtils.isEmpty(message)) {
-            log.info("received message is empty");
-
-        } else {
-            try {
-                json = new JSONObject(message);
-            } catch (JSONException exception) {
-                log.info("decoding json failed with: " + exception.getMessage());
-                sendBroadcast(News.ERROR, Error.UNKNOWN);
-                mState = PilightState.Disconnected;
-            }
-        }
+//        if (TextUtils.isEmpty(message)) {
+//            log.info("received message is empty");
+//
+//        } else {
+//            try {
+//                json = new JSONObject(message);
+//            } catch (JSONException exception) {
+//                log.info("decoding json failed with: " + exception.getMessage());
+//                sendBroadcast(News.ERROR, Error.UNKNOWN);
+//                mState = PilightState.Disconnected;
+//            }
+//        }
 
         switch (mState) {
 
             case ConfigRequested:
-                onPilightConfigResponse(json);
+                try {
+                    json = new JSONObject(message);
+                    if (!json.isNull("message") && json.getString("message").equals(new String("config"))) {
+                        try {
+                            if (!json.isNull("config")) {
+                                JSONObject jconfig = json.getJSONObject("config");
+                                if (!jconfig.isNull("gui")) {
+
+                                    mConfiguration = mConfiguration.create(this, jconfig.getJSONObject("gui"));
+
+                                    try {
+                                        request = new JSONObject();
+                                        request.put("action", "request values");
+                                        sendSocketMessage(request);
+                                        mState = PilightState.ValuesRequested;
+                                    } catch (JSONException exception) {
+                                        log.error("- error creating values request message", exception);
+                                    }
+
+                                    return;
+
+                                }
+                            }
+                        } catch(JSONException exception){
+                            log.info("- error reading config " + exception.getMessage());
+                        }
+                    }
+                } catch (JSONException exception){
+                }
+                break;
+
+            case ValuesRequested:
+                try {
+                    json = new JSONObject(message);
+                    if (!json.isNull("message") && json.getString("message").equals(new String("values"))) {
+                        try {
+                            if (!json.isNull("values")) {
+                                mPilight.startHeartBeat();
+
+                                JSONArray jvalues = json.getJSONArray("values");
+                                for(int i=0;i<jvalues.length();i++) {
+                                    mConfiguration.update(jvalues.getJSONObject(i));
+                                }
+
+                                if (!mCurrentlyTriesReconnecting) {
+                                    sendBroadcast(News.CONNECTED);
+                                }
+
+                                mCurrentlyTriesReconnecting = false;
+                                mState = PilightState.Connected;
+                            }
+                        } catch (JSONException exception) {
+                            log.info("- error reading values " + exception.getMessage());
+                        }
+                    }
+                } catch (JSONException exception){
+                }
                 break;
 
             case HandshakePending:
-                onPilightHandshakeResponse(json);
+                if(message.equals(new String("success"))) {
+                    request = new JSONObject();
+
+                    try {
+                        request.put("action", "request config");
+                    } catch (JSONException exception) {
+                        log.error("- error creating config request message", exception);
+                    }
+
+                    sendSocketMessage(request);
+                    mState = PilightState.ConfigRequested;
+
+                    return;
+                }
                 break;
 
             case Connected:
-                onPilightMessage(json);
+                try {
+                    json = new JSONObject(message);
+                    onPilightMessage(json);
+                } catch (JSONException exception) {
+                    log.error("- error creating values update message", exception);
+                }
                 break;
 
             case Connecting:
@@ -221,82 +304,11 @@ public class PilightServiceImpl extends Service implements PilightService, Confi
 
         if (json.isNull("origin")) {
             log.warn("- has no origin, ignored");
-        } else if (!TextUtils.equals(json.optString("origin"), "config")) {
+        } else if (!TextUtils.equals(json.optString("origin"), "update")) {
             log.warn("- wrong origin, ignored");
         } else {
             mConfiguration.update(json);
         }
-    }
-
-    private void onPilightConfigResponse(JSONObject json) {
-        log.info("pilight config response");
-        long mTimeDifference = 0;
-
-        if (!json.isNull("timestamp")) {
-            try {
-                long mServerTimestamp = json.getLong("timestamp");
-                Calendar calender = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-                long currentTime = calender.getTimeInMillis()/1000;
-                mTimeDifference = currentTime - mServerTimestamp;
-
-            } catch (JSONException exception) {
-                log.info("- error reading server timestamp " + exception.getMessage());
-            }
-        }
-        if (!json.isNull("config")) {
-            try {
-                mPilight.startHeartBeat();
-                mConfiguration = mConfiguration.create(this, json.getJSONObject("config"), mTimeDifference);
-
-                if (!mCurrentlyTriesReconnecting) {
-                    sendBroadcast(News.CONNECTED);
-                }
-
-                mCurrentlyTriesReconnecting = false;
-                mState = PilightState.Connected;
-                return;
-
-            } catch (JSONException exception) {
-                log.info("- error reading config " + exception.getMessage());
-            }
-        }
-
-        sendBroadcast(News.ERROR, Error.HANDSHAKE_FAILED);
-        mState = PilightState.Error;
-    }
-
-    private void onPilightHandshakeResponse(JSONObject json) {
-        log.info("pilight handshake response");
-
-        if (!json.isNull("message")) {
-            try {
-                final String message = json.getString("message");
-
-                if (TextUtils.equals("accept client", message)) {
-                    final JSONObject request = new JSONObject();
-
-                    try {
-                        request.put("message", "request config");
-                    } catch (JSONException exception) {
-                        log.error("- error creating config request message", exception);
-                    }
-
-                    sendSocketMessage(request);
-                    mState = PilightState.ConfigRequested;
-
-                    return;
-
-                } else {
-                    log.error("- error with message: " + message);
-                }
-
-            } catch (JSONException exception) {
-                log.info("- error reading message " + exception.getMessage());
-            }
-        }
-
-        sendBroadcast(News.ERROR, Error.HANDSHAKE_FAILED);
-        mState = PilightState.Error;
     }
 
     public boolean isConnected() {
@@ -347,10 +359,9 @@ public class PilightServiceImpl extends Service implements PilightService, Confi
             final JSONObject values = new JSONObject();
             boolean putCodeValues = false;
 
-            json.put("message", "send");
+            json.put("action", "control");
             json.put("code", code);
 
-            code.put("location", device.getLocationId());
             code.put("device", device.getId());
 
             if (changedProperty == Device.Properties.DIMLEVEL.ordinal()) {

@@ -97,6 +97,10 @@ public class Location implements Parcelable {
         }
     }
 
+    public Map<String, Device> getDevices() {
+        return mDevices;
+    }
+
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
         parcel.writeString(mId);

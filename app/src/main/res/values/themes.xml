@@ -26,6 +26,9 @@
         <item name="battery_empty">@drawable/battery_empty_dark</item>
         <item name="humidity">@drawable/humidity_dark</item>
         <item name="thermometer">@drawable/thermometer_dark</item>
+        <item name="winddir">@drawable/winddir_dark</item>
+        <item name="windgust">@drawable/windgust_dark</item>
+        <item name="windavg">@drawable/windavg_dark</item>
         <item name="sunrise">@drawable/sunrise_dark</item>
         <item name="sunset">@drawable/sunset_dark</item>
         <item name="update">@drawable/update_dark</item>
@@ -52,6 +55,9 @@
         <item name="battery_empty">@drawable/battery_empty_light</item>
         <item name="humidity">@drawable/humidity_light</item>
         <item name="thermometer">@drawable/thermometer_light</item>
+        <item name="winddir">@drawable/winddir_light</item>
+        <item name="windgust">@drawable/windgust_light</item>
+        <item name="windavg">@drawable/windavg_light</item>
         <item name="sunrise">@drawable/sunrise_light</item>
         <item name="sunset">@drawable/sunset_light</item>
         <item name="update">@drawable/update_light</item>

@@ -39,8 +39,6 @@ public class Configuration extends LinkedHashMap<String, Location> {
 
     public static final Logger log = LoggerFactory.getLogger(Configuration.class);
 
-    private long mServerTimeDifference = 0;
-
     private final RemoteChangeHandler mRemoteChangeHandler;
 
     public interface RemoteChangeHandler {
@@ -50,71 +48,54 @@ public class Configuration extends LinkedHashMap<String, Location> {
     }
 
     private Configuration(RemoteChangeHandler handler,
-                          JSONObject locationsJson, long diff) throws JSONException {
+                          JSONObject devicesJson) throws JSONException {
 
         mRemoteChangeHandler = handler;
-        mServerTimeDifference = diff;
 
-        final Iterator locationsJsonIterator = locationsJson.keys();
-        final Map<String, Location> unsortedLocations = new HashMap<>();
+        Iterator devicesJsonIterator = devicesJson.keys();
+        Map<String, Location> unsortedLocations = new HashMap<>();
+        Location location = null;
 
-        while (locationsJsonIterator.hasNext()) {
-            final String currentLocation = (String) locationsJsonIterator.next();
-            final Location location = parseLocation(currentLocation,
-                    locationsJson.getJSONObject(currentLocation));
+        while (devicesJsonIterator.hasNext()) {
+            final String deviceID = (String) devicesJsonIterator.next();
+            final JSONObject jdevice = devicesJson.getJSONObject(deviceID);
+            final String currentLocation = jdevice.getJSONArray("group").get(0).toString();
+            final String media = jdevice.getJSONArray("media").toString();
+            if(media.contains("mobile") || media.contains("all")) {
+                if (!unsortedLocations.containsKey(currentLocation)) {
+                    location = new Location();
+                    location.setId(currentLocation);
+                    location.setName(currentLocation);
+                    location.setOrder(jdevice.getInt("order"));
+                    Map<String, Device> devices = new HashMap<>();
+                    location.addSorted(devices);
+                    unsortedLocations.put(currentLocation, location);
+                }
+            }
+        }
 
-            unsortedLocations.put(currentLocation, location);
+        devicesJsonIterator = devicesJson.keys();
+        while (devicesJsonIterator.hasNext()) {
+            final String deviceID = (String) devicesJsonIterator.next();
+            final JSONObject jdevice = devicesJson.getJSONObject(deviceID);
+            final String currentLocation = jdevice.getJSONArray("group").get(0).toString();
+            final String media = jdevice.getJSONArray("media").toString();
+            if(media.contains("mobile") || media.contains("all")) {
+                location = unsortedLocations.get(currentLocation);
+
+                final Device device = parseDevice(jdevice);
+                device.setId(deviceID);
+                device.setLocationId(location.getId());
+                location.getDevices().put(deviceID, device);
+            }
         }
 
         addSorted(unsortedLocations);
     }
 
-    private Location parseLocation(String locationId,
-                                   JSONObject jsonLocation) throws JSONException {
-        final Location location = new Location();
-        final Iterator locationJsonIterator = jsonLocation.keys();
-        final Map<String, Device> devices = new HashMap<>();
-
-        location.setId(locationId);
-
-        while (locationJsonIterator.hasNext()) {
-            final String currentLocationAttribute = (String) locationJsonIterator.next();
-
-            switch (currentLocationAttribute) {
-                case "name":
-                    location.setName(jsonLocation.optString(currentLocationAttribute).trim());
-                    break;
-
-                case "order":
-                    location.setOrder(jsonLocation.optInt(currentLocationAttribute));
-                    break;
-
-                default:
-                    final JSONObject jsonDevice = jsonLocation.optJSONObject(currentLocationAttribute);
-
-                    if (jsonDevice != null) {
-                        final Device device = parseDevice(jsonDevice);
-
-                        device.setId(currentLocationAttribute);
-                        device.setLocationId(location.getId());
-                        devices.put(currentLocationAttribute, device);
-                    } else {
-                        log.debug("unhandled device parameter " + currentLocationAttribute
-                                + ":" + jsonLocation.optString(currentLocationAttribute));
-                    }
-
-                    break;
-            }
-        }
-
-        location.addSorted(devices);
-        return location;
-    }
-
     private Device parseDevice(JSONObject jsonDevice) throws JSONException {
         final Device device = new Device();
 
-        device.setTimeDifference(mServerTimeDifference);
         final Iterator deviceJsonIterator = jsonDevice.keys();
 
         while (deviceJsonIterator.hasNext()) {
@@ -127,26 +108,6 @@ public class Configuration extends LinkedHashMap<String, Location> {
 
                 case "order":
                     device.setOrder(jsonDevice.optInt(currentDeviceAttribute));
-                    break;
-
-                case "state":
-                    device.setState(jsonDevice.optString(currentDeviceAttribute));
-                    break;
-
-                case "dimlevel":
-                    device.setDimLevel(jsonDevice.optInt(currentDeviceAttribute));
-                    break;
-
-                case "temperature":
-                    device.setTemperature(jsonDevice.optInt(currentDeviceAttribute));
-                    break;
-
-                case "humidity":
-                    device.setHumidity(jsonDevice.optInt(currentDeviceAttribute));
-                    break;
-
-                case "battery":
-                    device.setHealthyBattery(jsonDevice.optInt(currentDeviceAttribute) == 1);
                     break;
 
                 case "type":
@@ -182,104 +143,50 @@ public class Configuration extends LinkedHashMap<String, Location> {
 
                     }
 
-                case "sunrise":
-                    device.setSunrise(jsonDevice.optInt(currentDeviceAttribute));
-                    break;
-
-                case "sunset":
-                    device.setSunset(jsonDevice.optInt(currentDeviceAttribute));
-                    break;
-
-                case "all":
-                    device.setAll(1 == 1);
-                    break;
-
-                case "timestamp":
-                    device.setTimestamp(jsonDevice.optInt(currentDeviceAttribute));
-                    break;
-
-                case "min-interval":
-                    device.setMinInterval(jsonDevice.optInt(currentDeviceAttribute));
-                    break;
-
-                case "poll-interval":
-                    device.setPollInterval(jsonDevice.optInt(currentDeviceAttribute));
-                    break;
-
-                case "year":
-                    device.setYear(jsonDevice.optInt(currentDeviceAttribute));
-                    break;
-
-                case "month":
-                    device.setMonth(jsonDevice.optInt(currentDeviceAttribute));
-                    break;
-
-                case "day":
-                    device.setDay(jsonDevice.optInt(currentDeviceAttribute));
-                    break;
-
-                case "hour":
-                    device.setHour(jsonDevice.optInt(currentDeviceAttribute));
-                    break;
-
-                case "minute":
-                    device.setMinute(jsonDevice.optInt(currentDeviceAttribute));
-                    break;
-
-                case "second":
-                    device.setSecond(jsonDevice.optInt(currentDeviceAttribute));
-                    break;
-
-                case "media":
-                    device.setMedia(jsonDevice.optString(currentDeviceAttribute));
-                    break;
-
-                case "action":
-                    device.setAction(jsonDevice.optString(currentDeviceAttribute));
-                    break;
-
                 /* Device GUI settings */
-                case "gui-show-battery":
+                case "show-battery":
                     device.setShowBattery(jsonDevice.optInt(currentDeviceAttribute) == 1);
                     break;
 
-                case "gui-show-temperature":
+                case "show-temperature":
                     device.setShowTemperature(jsonDevice.optInt(currentDeviceAttribute) == 1);
                     break;
 
-                case "gui-show-humidity":
+                case "show-humidity":
                     device.setShowHumidity(jsonDevice.optInt(currentDeviceAttribute) == 1);
                     break;
 
-                case "gui-show-sunriseset":
+                case "show-wind":
+                    device.setShowWindgust(jsonDevice.optInt(currentDeviceAttribute) == 1);
+                    device.setShowWindavg(jsonDevice.optInt(currentDeviceAttribute) == 1);
+                    device.setShowWinddir(jsonDevice.optInt(currentDeviceAttribute) == 1);
+                    break;
+
+                case "show-sunriseset":
                     device.setShowSunriseset(jsonDevice.optInt(currentDeviceAttribute) == 1);
                     break;
 
-                case "gui-show-media":
+                case "show-media":
                     device.setShowMedia(jsonDevice.optInt(currentDeviceAttribute) == 1);
                     break;
 
-                case "gui-show-action":
+                case "show-action":
                     device.setShowAction(jsonDevice.optInt(currentDeviceAttribute) == 1);
                     break;
 
-                case "gui-show-update":
+                case "show-update":
                     device.setShowUpdate(jsonDevice.optInt(currentDeviceAttribute) == 1);
                     break;
 
-                case "gui-decimals":
+                case "decimals":
                     device.setGUIDecimals(jsonDevice.optInt(currentDeviceAttribute));
                     break;
 
-                case "device-decimals":
-                    device.setDeviceDecimals(jsonDevice.optInt(currentDeviceAttribute));
-                    break;
-
-                case "gui-readonly":
+                case "readonly":
                     device.setReadOnly(jsonDevice.optInt(currentDeviceAttribute) == 1);
                     break;
 
-                case "gui-datetime-format":
+                case "datetime-format":
                     device.setDateTimeFormat(jsonDevice.optString(currentDeviceAttribute));
                     break;
 
@@ -293,13 +200,26 @@ public class Configuration extends LinkedHashMap<String, Location> {
         return device;
     }
 
-    private void updateDevices(String locationId, JSONArray deviceIds, JSONObject jsonValues) {
+    private void updateDevices(JSONArray deviceIds, JSONObject jsonValues) {
         final int deviceCount = deviceIds.length();
+        Location location = null;
+        boolean match = false;
 
         for (int i = 0; i < deviceCount; i++) {
             try {
+                match = false;
                 final String deviceId = deviceIds.getString(i);
-                updateDevice(get(locationId).get(deviceId), jsonValues);
+                Iterator<Location> it = this.values().iterator();
+                while(it.hasNext()) {
+                    location = it.next();
+                    if(location.getDevices().containsKey(deviceId)) {
+                        match = true;
+                        break;
+                    }
+                }
+                if(match) {
+                    updateDevice(location.get(deviceId), jsonValues);
+                }
             } catch (JSONException exception) {
                 log.warn("- updating values failed", exception);
             }
@@ -313,6 +233,10 @@ public class Configuration extends LinkedHashMap<String, Location> {
             final String valueKey = (String) jsonValuesIterator.next();
 
             switch (valueKey) {
+                case "all":
+                    device.setAll(jsonValues.optInt(valueKey) == 1);
+                    break;
+
                 case "timestamp":
                     device.setTimestamp(jsonValues.optInt(valueKey));
                     break;
@@ -331,6 +255,18 @@ public class Configuration extends LinkedHashMap<String, Location> {
 
                 case "humidity":
                     device.setHumidity(jsonValues.optInt(valueKey));
+                    break;
+
+                case "windavg":
+                    device.setWindavg(jsonValues.optInt(valueKey));
+                    break;
+
+                case "windgust":
+                    device.setWindgust(jsonValues.optInt(valueKey));
+                    break;
+
+                case "winddir":
+                    device.setWinddir(jsonValues.optInt(valueKey));
                     break;
 
                 case "battery":
@@ -369,6 +305,18 @@ public class Configuration extends LinkedHashMap<String, Location> {
                     device.setMedia(jsonValues.optString(valueKey));
                     break;
 
+                case "update":
+                    device.setUpdate(jsonValues.optInt(valueKey) == 1);
+                    break;
+
+                case "sunrise":
+                    device.setSunrise(jsonValues.optDouble(valueKey));
+                    break;
+
+                case "sunset":
+                    device.setSunset(jsonValues.optDouble(valueKey));
+                    break;
+
                 default:
                     log.info("device value ignored: " + valueKey);
                     break;
@@ -404,32 +352,17 @@ public class Configuration extends LinkedHashMap<String, Location> {
         }
     }
 
-    public static Configuration create(RemoteChangeHandler handler, JSONObject json, long diff) throws JSONException {
-        return new Configuration(handler, json, diff);
+    public static Configuration create(RemoteChangeHandler handler, JSONObject json) throws JSONException {
+        return new Configuration(handler, json);
     }
 
     public void update(JSONObject json) {
         log.info("update setting");
-
         if(json.has("devices")) {
-            final JSONObject jsonDevices = json.optJSONObject("devices");
+            final JSONArray jsonDevices = json.optJSONArray("devices");
             final JSONObject jsonValues = json.optJSONObject("values");
-            final Iterator locationIterator = jsonDevices.keys();
 
-            while (locationIterator.hasNext()) {
-                final String locationId = (String) locationIterator.next();
-                final JSONArray deviceIds = jsonDevices.optJSONArray(locationId);
-
-                updateDevices(locationId, deviceIds, jsonValues);
-            }
+            updateDevices(jsonDevices, jsonValues);
         }
-    }
-
-    public long getServerTimeDifference() {
-        return mServerTimeDifference;
-    }
-
-    public void setServerTimeDifference(long diff) {
-        mServerTimeDifference = diff;
     }
 }
