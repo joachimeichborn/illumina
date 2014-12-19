@@ -54,6 +54,8 @@
     <string name="sunset_placeholder">0:00</string>
     <string name="temperature_placeholder">24°</string>
     <string name="humidity_placeholder">63%</string>
+    <string name="windgust_placeholder">70</string>
+    <string name="windavg_placeholder">25</string>
     <string name="unknown_placeholder">onbekend</string>
     <string name="search">pilight zoeken</string>
     <string name="service_not_found">pilight niet gevonden</string>
