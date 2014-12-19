@@ -60,8 +60,8 @@ public class Configuration extends LinkedHashMap<String, Location> {
             final String deviceID = (String) devicesJsonIterator.next();
             final JSONObject jdevice = devicesJson.getJSONObject(deviceID);
             final String currentLocation = jdevice.getJSONArray("group").get(0).toString();
-            final String media = jdevice.getJSONArray("media").toString();
-            if(media.contains("mobile") || media.contains("all")) {
+//            final String media = jdevice.getJSONArray("media").toString();
+//            if(media.contains("mobile") || media.contains("all")) {
                 if (!unsortedLocations.containsKey(currentLocation)) {
                     location = new Location();
                     location.setId(currentLocation);
@@ -71,7 +71,7 @@ public class Configuration extends LinkedHashMap<String, Location> {
                     location.addSorted(devices);
                     unsortedLocations.put(currentLocation, location);
                 }
-            }
+//            }
         }
 
         devicesJsonIterator = devicesJson.keys();
@@ -79,15 +79,15 @@ public class Configuration extends LinkedHashMap<String, Location> {
             final String deviceID = (String) devicesJsonIterator.next();
             final JSONObject jdevice = devicesJson.getJSONObject(deviceID);
             final String currentLocation = jdevice.getJSONArray("group").get(0).toString();
-            final String media = jdevice.getJSONArray("media").toString();
-            if(media.contains("mobile") || media.contains("all")) {
+//            final String media = jdevice.getJSONArray("media").toString();
+//            if(media.contains("mobile") || media.contains("all")) {
                 location = unsortedLocations.get(currentLocation);
 
                 final Device device = parseDevice(jdevice);
                 device.setId(deviceID);
                 device.setLocationId(location.getId());
                 location.getDevices().put(deviceID, device);
-            }
+//            }
         }
 
         addSorted(unsortedLocations);

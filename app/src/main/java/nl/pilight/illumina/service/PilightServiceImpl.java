@@ -165,6 +165,7 @@ public class PilightServiceImpl extends Service implements PilightService, Confi
 
         try {
             json.put("action", "identify");
+            json.put("media","mobile");
             joptions.put("config", 1);
             json.put("options", joptions);
         } catch (JSONException exception) {
@@ -256,7 +257,7 @@ public class PilightServiceImpl extends Service implements PilightService, Confi
                 break;
 
             case HandshakePending:
-                if(message.equals(new String("success"))) {
+                if(message.equals(new String("{\"status\":\"success\"}"))) {
                     request = new JSONObject();
 
                     try {
