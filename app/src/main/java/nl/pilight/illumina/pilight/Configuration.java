@@ -156,6 +156,10 @@ public class Configuration extends LinkedHashMap<String, Location> {
                     device.setShowHumidity(jsonDevice.optInt(currentDeviceAttribute) == 1);
                     break;
 
+                case "show-pressure":
+                    device.setShowPressure(jsonDevice.optInt(currentDeviceAttribute) == 1);
+                    break;
+
                 case "show-wind":
                     device.setShowWindgust(jsonDevice.optInt(currentDeviceAttribute) == 1);
                     device.setShowWindavg(jsonDevice.optInt(currentDeviceAttribute) == 1);
@@ -255,6 +259,10 @@ public class Configuration extends LinkedHashMap<String, Location> {
 
                 case "humidity":
                     device.setHumidity(jsonValues.optInt(valueKey));
+                    break;
+
+                case "pressure":
+                    device.setPressure(jsonValues.optInt(valueKey));
                     break;
 
                 case "windavg":

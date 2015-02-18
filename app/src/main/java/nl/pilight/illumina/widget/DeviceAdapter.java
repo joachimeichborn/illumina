@@ -138,6 +138,7 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
         DeviceViewHolder viewHolder = null;
 
         if (view == null) {
+
             switch (type) {
                 case SWITCH:
                     view = inflater.inflate(R.layout.device_list_item_switch, parent, false);
@@ -505,6 +506,8 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
         private final TextView mTemperatureText;
         private final ViewGroup mHumidity;
         private final TextView mHumidityText;
+        private final ViewGroup mPressure;
+        private final TextView mPressureText;
         private final ViewGroup mWindgust;
         private final TextView mWindgustText;
         private final ViewGroup mWindavg;
@@ -534,6 +537,9 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 
             mHumidity = (ViewGroup) view.findViewById(R.id.humidity);
             mHumidityText = (TextView) view.findViewById(R.id.humidity_text);
+
+            mPressure = (ViewGroup) view.findViewById(R.id.pressure);
+            mPressureText = (TextView) view.findViewById(R.id.pressure_text);
 
             mWindgust = (ViewGroup) view.findViewById(R.id.windgust);
             mWindgustText = (TextView) view.findViewById(R.id.windgust_text);
@@ -599,6 +605,13 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
                 mHumidityText.setText(device.getHumidity()+"%");
             } else {
                 mHumidity.setVisibility(View.GONE);
+            }
+
+            if (device.hasPressureValue() && device.isShowPressure()) {
+                mPressure.setVisibility(View.VISIBLE);
+                mPressureText.setText(Integer.toString(device.getPressure()));
+            } else {
+                mPressure.setVisibility(View.GONE);
             }
 
             if (device.hasWinddirValue() && device.isShowWinddir()) {

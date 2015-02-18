@@ -30,6 +30,7 @@
     <attr name="windgust" format="reference" />
     <attr name="windavg" format="reference" />
     <attr name="humidity" format="reference" />
+    <attr name="pressure" format="reference" />
     <attr name="weather" format="reference" />
     <attr name="update" format="reference" />
     <attr name="play" format="reference" />

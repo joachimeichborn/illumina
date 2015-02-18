@@ -1,6 +1,15 @@
 illumina
 =======
 
+Icons
+The Illumina icons are transparent and "duotoned". The duotone colors used are:
+- Dark Skin: #b7b7b7
+- Light Skin: #666666
+
+The Dark Skin variation is also used in the pilight webgui.
+
+To build run "gradlew assembleRelease" in a cmdline prompt.
+
 Android app frontend for pilight
 
 License

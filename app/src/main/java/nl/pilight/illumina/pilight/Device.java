@@ -70,10 +70,12 @@ public class Device implements Parcelable {
     private boolean mShowTemperature;
     private boolean mHasDateTimeFormat;
     private int mHumidity;
+    private int mPressure;
     private int mWindavg;
     private int mWindgust;
     private int mWinddir;
     private boolean mShowHumidity;
+    private boolean mShowPressure;
     private boolean mShowWindavg;
     private boolean mShowWindgust;
     private boolean mShowWinddir;
@@ -94,6 +96,7 @@ public class Device implements Parcelable {
     private boolean mHasBatteryValue = false;
     private boolean mHasTemperatureValue = false;
     private boolean mHasHumidityValue = false;
+    private boolean mHasPressureValue = false;
     private boolean mHasWindavgValue = false;
     private boolean mHasWindgustValue = false;
     private boolean mHasWinddirValue = false;
@@ -254,6 +257,10 @@ public class Device implements Parcelable {
         return mHasHumidityValue;
     }
 
+    public boolean hasPressureValue() {
+        return mHasPressureValue;
+    }
+
     public boolean hasWindavgValue() {
         return mHasWindavgValue;
     }
@@ -298,8 +305,21 @@ public class Device implements Parcelable {
         mHumidity = humidity;
     }
 
+    public int getPressure() {
+        return mPressure;
+    }
+
+    public void setPressure(int pressure) {
+        mHasPressureValue = true;
+        mPressure = pressure;
+    }
+
     public boolean isShowHumidity() {
         return mShowHumidity;
+    }
+
+    public boolean isShowPressure() {
+        return mShowPressure;
     }
 
     public int getWindavg() {
@@ -347,6 +367,10 @@ public class Device implements Parcelable {
 
     public void setShowHumidity(boolean showHumidity) {
         mShowHumidity = showHumidity;
+    }
+
+    public void setShowPressure(boolean showPressure) {
+        mShowPressure = showPressure;
     }
 
     public void setShowWindavg(boolean showWindavg) { mShowWindavg = showWindavg;    }
@@ -456,6 +480,7 @@ public class Device implements Parcelable {
         mDimLevel = parcel.readInt();
         mTemperature = parcel.readInt();
         mHumidity = parcel.readInt();
+        mPressure = parcel.readInt();
         mWindavg = parcel.readInt();
         mWindgust = parcel.readInt();
         mWinddir = parcel.readInt();
@@ -476,6 +501,7 @@ public class Device implements Parcelable {
         mHasHealthyBattery = Boolean.parseBoolean(parcel.readString());
         mShowTemperature = Boolean.parseBoolean(parcel.readString());
         mShowHumidity = Boolean.parseBoolean(parcel.readString());
+        mShowPressure = Boolean.parseBoolean(parcel.readString());
         mShowWindavg = Boolean.parseBoolean(parcel.readString());
         mShowWindgust = Boolean.parseBoolean(parcel.readString());
         mShowWinddir = Boolean.parseBoolean(parcel.readString());
@@ -486,6 +512,7 @@ public class Device implements Parcelable {
         mShowAction = Boolean.parseBoolean(parcel.readString());
         mHasBatteryValue = Boolean.parseBoolean(parcel.readString());
         mHasHumidityValue = Boolean.parseBoolean(parcel.readString());
+        mHasPressureValue = Boolean.parseBoolean(parcel.readString());
         mHasWindavgValue = Boolean.parseBoolean(parcel.readString());
         mHasWindgustValue = Boolean.parseBoolean(parcel.readString());
         mHasWinddirValue = Boolean.parseBoolean(parcel.readString());
@@ -509,6 +536,7 @@ public class Device implements Parcelable {
         parcel.writeInt(mDimLevel);
         parcel.writeInt(mTemperature);
         parcel.writeInt(mHumidity);
+        parcel.writeInt(mPressure);
         parcel.writeInt(mWindavg);
         parcel.writeInt(mWindgust);
         parcel.writeInt(mWinddir);
@@ -529,6 +557,7 @@ public class Device implements Parcelable {
         parcel.writeString(mHasHealthyBattery ? "true" : "false");
         parcel.writeString(mShowTemperature ? "true" : "false");
         parcel.writeString(mShowHumidity ? "true" : "false");
+        parcel.writeString(mShowPressure ? "true" : "false");
         parcel.writeString(mShowWindavg ? "true" : "false");
         parcel.writeString(mShowWindgust ? "true" : "false");
         parcel.writeString(mShowWinddir ? "true" : "false");
@@ -539,6 +568,7 @@ public class Device implements Parcelable {
         parcel.writeString(mShowAction ? "true" : "false");
         parcel.writeString(mHasBatteryValue ? "true" : "false");
         parcel.writeString(mHasHumidityValue ? "true" : "false");
+        parcel.writeString(mHasPressureValue ? "true" : "false");
         parcel.writeString(mHasWindavgValue ? "true" : "false");
         parcel.writeString(mHasWindgustValue ? "true" : "false");
         parcel.writeString(mHasWinddirValue ? "true" : "false");
