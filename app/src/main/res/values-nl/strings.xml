@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+~ illumina, a pilight remote
+~
+~ Copyright (c) 2014 Peter Heisig <http://google.com/+PeterHeisig>
+~                    CurlyMo <http://www.pilight.org>
+~
+~ Illumina is free software: you can redistribute it and/or modify
+~ it under the terms of the GNU General Public License as published by
+~ the Free Software Foundation, either version 3 of the License, or
+~ (at your option) any later version.
+~
+~ Ilummina is distributed in the hope that it will be useful,
+~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+~ GNU General Public License for more details.
+~
+~ You should have received a copy of the GNU General Public License
+~ along with illumina. If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<resources>
+
+    <string-array name="theme_labels">
+        <item>Donker</item>
+        <item>Licht</item>
+    </string-array>
+
+    <string-array name="theme_values">
+        <item>Theme.Illumina</item>
+        <item>Theme.Illumina.Light</item>
+    </string-array>
+
+    <string name="theme_default">Theme.Illumina.Light</string>
+
+    <string name="app_name">illumina</string>
+    <string name="settings">Instellingen</string>
+    <string name="dummy">dummy</string>
+    <string name="loading">Aan het laden</string>
+    <string name="connect">Verbinding maken</string>
+    <string name="hostname_or_ip">Hostnaam of IP</string>
+    <string name="port">Poort</string>
+    <string name="connection_help">Stel je pilight server:poort configuratie in of probeer pilight automatisch te vinden.</string>
+    <string name="colon">:</string>
+    <string name="unknown_error">Sorry, er is een onbekende fout opgetreden,</string>
+    <string name="wrong_settings_error">Kan niet verbinden! Controleer je server en/of poort instelling(en).</string>
+    <string name="remote_closed_connection">Verbinding met pilight verbroken.</string>
+    <string name="problem_with_pi">Kan niet met pilight verbinden.</string>
+    <string name="no_data">Geen configuratie gevonden. Je zult eerst wat apparaten moeten instelling in je pilight configuratie. Kijk voor een handleiding op http://wiki.pilight.org/doku.php/config</string>
+    <string name="theme">Stijlen</string>
+    <string name="theme_summary">illumina ondersteunt een lichte en een donkere stijl. Je kan één van deze twee stijlen kiezen.</string>
+    <string name="theme_and_behaviour">Stijlen &amp; Gedrag</string>
+    <string name="sunrise_placeholder">0:00</string>
+    <string name="sunset_placeholder">0:00</string>
+    <string name="temperature_placeholder">24°</string>
+    <string name="humidity_placeholder">63%</string>
+    <string name="pressure_placeholder">1000</string>
+    <string name="windgust_placeholder">70</string>
+    <string name="windavg_placeholder">25</string>
+    <string name="unknown_placeholder">onbekend</string>
+    <string name="search">pilight zoeken</string>
+    <string name="service_not_found">pilight niet gevonden</string>
+    <string name="auto_connect">Automatisch verbinden</string>
+    <string name="auto_connect_summary">Probeer wanneer mogelijk automatisch met pilight te verbinden.</string>
+</resources>

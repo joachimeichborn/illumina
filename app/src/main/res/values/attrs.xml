@@ -1,12 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+~ illumina, a pilight remote
+~
+~ Copyright (c) 2014 Peter Heisig <http://google.com/+PeterHeisig>
+~                    CurlyMo <http://www.pilight.org>
+~
+~ Illumina is free software: you can redistribute it and/or modify
+~ it under the terms of the GNU General Public License as published by
+~ the Free Software Foundation, either version 3 of the License, or
+~ (at your option) any later version.
+~
+~ Ilummina is distributed in the hope that it will be useful,
+~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+~ GNU General Public License for more details.
+~
+~ You should have received a copy of the GNU General Public License
+~ along with illumina. If not, see <http://www.gnu.org/licenses/>.
+-->
+
 <resources>
     <attr name="battery_empty" format="reference" />
     <attr name="battery_full" format="reference" />
     <attr name="thermometer" format="reference" />
+    <attr name="sunrise" format="reference" />
+    <attr name="loader" format="reference" />
+    <attr name="sunset" format="reference" />
+    <attr name="winddir" format="reference" />
+    <attr name="windgust" format="reference" />
+    <attr name="windavg" format="reference" />
     <attr name="humidity" format="reference" />
-    <attr name="search_action_icon" format="reference" />
+    <attr name="pressure" format="reference" />
+    <attr name="weather" format="reference" />
+    <attr name="update" format="reference" />
+    <attr name="play" format="reference" />
+    <attr name="pause" format="reference" />
+    <attr name="stop" format="reference" />
+    <attr name="shutdown" format="reference" />
+    <attr name="home" format="reference" />
+    <attr name="movie" format="reference" />
+    <attr name="episode" format="reference" />
+    <attr name="music" format="reference" />
+    <attr name="screen_active" format="reference" />
+    <attr name="screen_inactive" format="reference" />
     <attr name="connect_action_icon" format="reference" />
+    <attr name="search_action_icon" format="reference" />
     <attr name="up_action" format="reference" />
     <attr name="down_action" format="reference" />
     <attr name="selector_background" format="reference" />
+    <declare-styleable name="FlowLayout">
+        <attr name="android:gravity" />
+    </declare-styleable>
+    <declare-styleable name="FlowLayout_Layout">
+        <attr name="android:layout_gravity" />
+    </declare-styleable>
 </resources>
