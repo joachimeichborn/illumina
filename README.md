@@ -8,7 +8,7 @@ The Illumina icons are transparent and "duotoned". The duotone colors used are:
 
 The Dark Skin variation is also used in the pilight webgui.
 
-To build run "gradlew assembleRelease" in a cmdline prompt.
+To build run "gradlew assemble" in a cmdline prompt.
 
 When it's finished you can use the apk generated here:
 app/build/outputs/apk/app-debug-unaligned.apk
