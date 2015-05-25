@@ -44,7 +44,11 @@ public class Device implements Parcelable {
         DATETIME,
         XBMC,
         LIRC,
-        WEBCAM
+        WEBCAM,
+        MOTION,
+        DUSK,
+        PING,
+        LABEL
     }
     public static enum Properties {
         DIMLEVEL,
@@ -61,6 +65,8 @@ public class Device implements Parcelable {
     private boolean mAll;
     private String mMedia;
     private String mAction;
+    private String mLabel;
+    private String mColor;
     private boolean mUpdate;
     private DeviceTypes mType = DeviceTypes.UNKNOWN;
     private int mDimLevel;
@@ -79,6 +85,7 @@ public class Device implements Parcelable {
     private boolean mShowWindavg;
     private boolean mShowWindgust;
     private boolean mShowWinddir;
+    private boolean mShowConfirm;
     private double mSunrise;
     private double mSunset;
     private boolean mShowSunriseset;
@@ -197,6 +204,10 @@ public class Device implements Parcelable {
     public String getMedia() { return mMedia; }
 
     public String getAction() { return mAction; }
+
+    public String getLabel() { return mLabel; }
+
+    public String getColor() { return mColor; }
 
     public boolean getUpdate() { return mUpdate; }
 
@@ -361,6 +372,10 @@ public class Device implements Parcelable {
         return mShowWinddir;
     }
 
+    public boolean isShowConfirm() {
+        return mShowConfirm;
+    }
+
     public boolean isShowUpdate() {
         return mShowUpdate;
     }
@@ -381,6 +396,10 @@ public class Device implements Parcelable {
 
     public void setShowWinddir(boolean showWinddir) {
         mShowWinddir = showWinddir;
+    }
+
+    public void setShowConfirm(boolean showConfirm) {
+        mShowConfirm = showConfirm;
     }
 
     public void setShowBattery(boolean showBattery) {
@@ -445,6 +464,10 @@ public class Device implements Parcelable {
 
     public void setAction(String action) { mAction = action; }
 
+    public void setLabel(String label) { mLabel = label; }
+
+    public void setColor(String color) { mColor = color; }
+
     public void setUpdate(boolean update) { mUpdate = update; }
 
     public void setDateTimeFormat(String datetimeformat) {
@@ -494,6 +517,8 @@ public class Device implements Parcelable {
         mSecond = parcel.readInt();
         mMedia = parcel.readString();
         mAction = parcel.readString();
+        mLabel = parcel.readString();
+        mColor = parcel.readString();
         mUpdate = Boolean.parseBoolean(parcel.readString());
         mGUIDecimals = parcel.readInt();
         mDateTimeFormat = parcel.readString();
@@ -505,6 +530,7 @@ public class Device implements Parcelable {
         mShowWindavg = Boolean.parseBoolean(parcel.readString());
         mShowWindgust = Boolean.parseBoolean(parcel.readString());
         mShowWinddir = Boolean.parseBoolean(parcel.readString());
+        mShowConfirm = Boolean.parseBoolean(parcel.readString());
         mShowBattery = Boolean.parseBoolean(parcel.readString());
         mShowSunriseset = Boolean.parseBoolean(parcel.readString());
         mShowUpdate = Boolean.parseBoolean(parcel.readString());
@@ -550,6 +576,8 @@ public class Device implements Parcelable {
         parcel.writeInt(mSecond);
         parcel.writeString(mMedia);
         parcel.writeString(mAction);
+        parcel.writeString(mLabel);
+        parcel.writeString(mColor);
         parcel.writeString(mUpdate ? "true" : "false");
         parcel.writeInt(mGUIDecimals);
         parcel.writeString(mDateTimeFormat);
@@ -561,6 +589,7 @@ public class Device implements Parcelable {
         parcel.writeString(mShowWindavg ? "true" : "false");
         parcel.writeString(mShowWindgust ? "true" : "false");
         parcel.writeString(mShowWinddir ? "true" : "false");
+        parcel.writeString(mShowConfirm ? "true" : "false");
         parcel.writeString(mShowBattery ? "true" : "false");
         parcel.writeString(mShowSunriseset ? "true" : "false");
         parcel.writeString(mShowUpdate ? "true" : "false");
