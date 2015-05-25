@@ -137,6 +137,9 @@ public class Configuration extends LinkedHashMap<String, Location> {
                         case 9:
                             device.setType(Device.DeviceTypes.XBMC);
                             break;
+                        case 15:
+                            device.setType(Device.DeviceTypes.LABEL);
+                            break;
                         default:
                             device.setType(Device.DeviceTypes.UNKNOWN);
                             break;
@@ -180,6 +183,10 @@ public class Configuration extends LinkedHashMap<String, Location> {
 
                 case "show-update":
                     device.setShowUpdate(jsonDevice.optInt(currentDeviceAttribute) == 1);
+                    break;
+
+                case "show-confirm":
+                    device.setShowConfirm(jsonDevice.optInt(currentDeviceAttribute) == 1);
                     break;
 
                 case "decimals":
@@ -323,6 +330,14 @@ public class Configuration extends LinkedHashMap<String, Location> {
 
                 case "sunset":
                     device.setSunset(jsonValues.optDouble(valueKey));
+                    break;
+
+                case "color":
+                    device.setColor(jsonValues.optString(valueKey));
+                    break;
+
+                case "label":
+                    device.setLabel(jsonValues.optString(valueKey));
                     break;
 
                 default:

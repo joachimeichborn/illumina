@@ -25,6 +25,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -180,6 +181,11 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
                     viewHolder = new XBMCViewHolder(view);
                     break;
 
+                case LABEL:
+                    view = inflater.inflate(R.layout.device_list_item_label, parent, false);
+                    viewHolder = new LabelViewHolder(view);
+                    break;
+
                 case UNKNOWN:
                     view = inflater.inflate(R.layout.device_list_item_unknown, parent, false);
                     viewHolder = new UnknownViewHolder(view);
@@ -284,6 +290,24 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 
             mCheckBox.setChecked(device.isOn());
             mCheckBox.setEnabled(device.isWritable());
+        }
+
+    }
+
+    private static class LabelViewHolder extends DeviceViewHolder {
+
+        private TextView mLabel;
+
+        LabelViewHolder(View view) {
+            super(view);
+            mLabel = (TextView)view.findViewById(R.id.label_text);
+        }
+
+        void setDevice(Device device) {
+            super.setDevice(device);
+
+            mLabel.setText(device.getLabel());
+            mLabel.setTextColor(Color.parseColor(device.getColor()));
         }
 
     }

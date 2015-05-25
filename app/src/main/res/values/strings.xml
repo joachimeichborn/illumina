@@ -57,6 +57,7 @@
     <string name="pressure_placeholder">1000</string>
     <string name="windgust_placeholder">70</string>
     <string name="windavg_placeholder">25</string>
+    <string name="label_placeholder"></string>
     <string name="unknown_placeholder">unknown</string>
     <string name="search">Find pilight</string>
     <string name="service_not_found">No pilight service found</string>
