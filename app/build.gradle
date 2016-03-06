@@ -6,7 +6,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.9.+'
+        classpath 'com.android.tools.build:gradle:1.5.0'
     }
 }
 
@@ -16,7 +16,7 @@ repositories {
 
 android {
     compileSdkVersion 19
-    buildToolsVersion '19.1.0'
+    buildToolsVersion '23.0.2'
 
     defaultConfig {
         applicationId "pilight.nl.illumina"
@@ -33,8 +33,8 @@ android {
 
     buildTypes {
         release {
-            runProguard false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            //runProguard false
+            //proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
     lintOptions {
@@ -43,11 +43,14 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:support-v4:19.0.+'
     compile 'com.android.support:appcompat-v7:19.0.+'
     compile 'com.github.machinarius:preferencefragment:0.1.1'
-
+    testCompile 'org.json:json:20151123'
+    testCompile 'org.testng:testng:6.9.4'
+    testCompile 'org.jmock:jmock:2.8.2'
+    testCompile 'org.robolectric:robolectric:3.0'
     compile 'org.slf4j:slf4j-api:1.7.6',
             'com.github.tony19:logback-android-core:1.1.1-2',
             'com.github.tony19:logback-android-classic:1.1.1-2'

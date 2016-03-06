@@ -27,32 +27,32 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import nl.pilight.illumina.fragment.DeviceListFragment;
-import nl.pilight.illumina.pilight.Location;
+import nl.pilight.illumina.pilight.Group;
 
 public class LocationPagerAdapter extends FragmentPagerAdapter {
 
-    private final ArrayList<Location> mLocations;
+	private final ArrayList<Group> mGroups;
 
-    public LocationPagerAdapter(FragmentManager fragmentManager, ArrayList<Location> locations) {
-        super(fragmentManager);
+	public LocationPagerAdapter(FragmentManager fragmentManager, ArrayList<Group> groups) {
+		super(fragmentManager);
 
-        mLocations = locations;
-    }
+		mGroups = groups;
+	}
 
-    @Override
-    public Fragment getItem(int position) {
-        return DeviceListFragment.newInstance(mLocations.get(position).getId());
-    }
+	@Override
+	public Fragment getItem(int position) {
+		return DeviceListFragment.newInstance(mGroups.get(position).getId());
+	}
 
-    @Override
-    public int getCount() {
-        return mLocations.size();
-    }
+	@Override
+	public int getCount() {
+		return mGroups.size();
+	}
 
-    @Override
-    public CharSequence getPageTitle(int position) {
-        final Locale locale = Locale.getDefault();
-        return mLocations.get(position).getName().toUpperCase(locale);
-    }
+	@Override
+	public CharSequence getPageTitle(int position) {
+		final Locale locale = Locale.getDefault();
+		return mGroups.get(position).getId().toUpperCase(locale);
+	}
 
 }

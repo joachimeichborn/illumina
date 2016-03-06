@@ -58,6 +58,7 @@
     <string name="windgust_placeholder">70</string>
     <string name="windavg_placeholder">25</string>
     <string name="unknown_placeholder">onbekend</string>
+    <string name="seekbar_placeholder">10</string>
     <string name="label_placeholder"></string>
     <string name="search">pilight zoeken</string>
     <string name="service_not_found">pilight niet gevonden</string>

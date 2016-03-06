@@ -34,8 +34,8 @@ import java.util.ArrayList;
 
 import nl.pilight.Illumina;
 import nl.pilight.illumina.R;
-import nl.pilight.illumina.pilight.Device;
-import nl.pilight.illumina.pilight.Location;
+import nl.pilight.illumina.pilight.devices.Device;
+import nl.pilight.illumina.pilight.Group;
 import nl.pilight.illumina.service.PilightBinder;
 import nl.pilight.illumina.service.PilightService;
 
@@ -114,13 +114,13 @@ public abstract class BaseActivity extends ActionBarActivity implements
     }
 
     @Override
-    public void onLocationListResponse(ArrayList<Location> locations) {
-        getLogger().info("onLocationListResponse, #locations = " + locations.size());
+    public void onGroupListResponse(ArrayList<Group> groups) {
+        getLogger().info("onGroupListResponse, #groups = " + groups.size());
     }
 
     @Override
-    public void onLocationResponse(Location location) {
-        getLogger().info("onLocationResponse(" + location.getId() + ")");
+    public void onGroupResponse(Group group) {
+        getLogger().info("onGroupResponse(" + group.getId() + ")");
     }
 
     // ------------------------------------------------------------------------

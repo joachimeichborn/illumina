@@ -40,7 +40,7 @@ public class Illumina extends Application {
 
     public static final String PREF_AUTO_CONNECT = "illumina.auto_connect";
 
-    public static final String PREFERENCES_NAME = BuildConfig.PACKAGE_NAME + "_preferences";
+    public static final String PREFERENCES_NAME = BuildConfig.APPLICATION_ID + "_preferences";
 
     public static final String LOG_FILE_NAME = "application.log";
 
