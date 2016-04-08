@@ -34,13 +34,13 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 
 import nl.pilight.illumina.R;
-import nl.pilight.illumina.pilight.Location;
+import nl.pilight.illumina.pilight.Group;
 import nl.pilight.illumina.service.PilightService;
 import nl.pilight.illumina.widget.LocationPagerAdapter;
 
-public class LocationListActivity extends BaseActivity {
+public class GroupListActivity extends BaseActivity {
 
-    public static final Logger log = LoggerFactory.getLogger(LocationListActivity.class);
+    public static final Logger log = LoggerFactory.getLogger(GroupListActivity.class);
 
     // ------------------------------------------------------------------------
     //
@@ -63,7 +63,7 @@ public class LocationListActivity extends BaseActivity {
     @Override
     public void onPilightConnected() {
         super.onPilightConnected();
-        requestLocations();
+        requestGroups();
     }
 
     @Override
@@ -73,27 +73,27 @@ public class LocationListActivity extends BaseActivity {
     }
 
     @Override
-    public void onLocationListResponse(ArrayList<Location> locations) {
-        super.onLocationListResponse(locations);
+    public void onGroupListResponse(ArrayList<Group> groups) {
+        super.onGroupListResponse(groups);
 
         final ActionBar actionBar = getSupportActionBar();
         final FragmentPagerAdapter pagerAdapter = new LocationPagerAdapter(
-                getSupportFragmentManager(), locations);
+                getSupportFragmentManager(), groups);
 
         mViewPager.setAdapter(pagerAdapter);
 
-        for (Location location : locations) {
+        for (Group group : groups) {
             actionBar.addTab(
                     actionBar.newTab()
-                            .setText(location.getName())
+                            .setText(group.getId())
                             .setTabListener(mTabListener));
         }
 
-        if (locations.size() > 1) {
+        if (groups.size() > 1) {
             actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         }
 
-        if (locations.isEmpty()) {
+        if (groups.isEmpty()) {
             mEmptyView.setVisibility(View.VISIBLE);
         }
 
@@ -103,9 +103,9 @@ public class LocationListActivity extends BaseActivity {
         }
     }
 
-    private void requestLocations() {
-        log.info("requestLocations");
-        dispatch(Message.obtain(null, PilightService.Request.LOCATION_LIST));
+    private void requestGroups() {
+        log.info("requestGroups");
+        dispatch(Message.obtain(null, PilightService.Request.GROUP_LIST));
     }
 
     // ------------------------------------------------------------------------

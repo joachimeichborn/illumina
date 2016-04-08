@@ -45,7 +45,7 @@
         </activity>
 
         <activity
-            android:name="nl.pilight.illumina.activity.LocationListActivity"
+            android:name=".activity.GroupListActivity"
             android:configChanges="orientation|screenSize"
             android:launchMode="singleTask"
             android:label="@string/app_name"

@@ -63,7 +63,7 @@ public class ConnectionActivity extends BaseActivity implements SsdpLocator.Cons
     public void onPilightConnected() {
         super.onPilightConnected();
         setBusy(true);
-        startActivity(new Intent(this, LocationListActivity.class));
+        startActivity(new Intent(this, GroupListActivity.class));
     }
 
     @Override

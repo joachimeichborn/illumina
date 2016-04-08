@@ -30,179 +30,184 @@ import android.widget.ListView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 import nl.pilight.illumina.R;
-import nl.pilight.illumina.pilight.Device;
-import nl.pilight.illumina.pilight.Location;
+import nl.pilight.illumina.pilight.Group;
+import nl.pilight.illumina.pilight.devices.AbstractDevice;
+import nl.pilight.illumina.pilight.devices.Device;
+import nl.pilight.illumina.pilight.devices.ToggleableDevice;
 import nl.pilight.illumina.service.PilightService;
 import nl.pilight.illumina.widget.DeviceAdapter;
 
 public class DeviceListFragment extends BaseListFragment implements DeviceAdapter.DeviceChangeListener {
 
-    public static final Logger log = LoggerFactory.getLogger(DeviceListFragment.class);
+	public static final Logger log = LoggerFactory.getLogger(DeviceListFragment.class);
 
-    public static final String ARG_LOCATION_ID = "locationId";
+	public static final String ARG_LOCATION_ID = "locationId";
 
-    private String mLocationId;
+	private String mGroupId;
 
-    private Comparator<? super Device> mDeviceOrderComparator = new Comparator<Device>() {
-        @Override
-        public int compare(Device device, Device device2) {
-            final int o1 = device.getOrder();
-            final int o2 = device2.getOrder();
+	private Comparator<? super Device> mDeviceOrderComparator = new Comparator<Device>() {
+		@Override
+		public int compare(Device device, Device device2) {
+			final int o1 = device.getOrder();
+			final int o2 = device2.getOrder();
 
-            if (o1 > o2) {
-                return 1;
-            } else if (o1 < o2) {
-                return -1;
-            } else {
-                return 0;
-            }
-        }
-    };
+			if (o1 > o2) {
+				return 1;
+			} else if (o1 < o2) {
+				return -1;
+			} else {
+				return 0;
+			}
+		}
+	};
 
-    public static DeviceListFragment newInstance(String locationId) {
-        final DeviceListFragment fragment = new DeviceListFragment();
-        final Bundle args = new Bundle();
+	public static DeviceListFragment newInstance(String locationId) {
+		final DeviceListFragment fragment = new DeviceListFragment();
+		final Bundle args = new Bundle();
 
-        args.putString(ARG_LOCATION_ID, locationId);
-        fragment.setArguments(args);
-        return fragment;
-    }
+		args.putString(ARG_LOCATION_ID, locationId);
+		fragment.setArguments(args);
+		return fragment;
+	}
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 
-        mLocationId = getArguments().getString(ARG_LOCATION_ID);
+		mGroupId = getArguments().getString(ARG_LOCATION_ID);
 
-        assert mLocationId != null;
-        log.info(mLocationId + ": onCreate()");
-    }
+		assert mGroupId != null;
+		log.info(mGroupId + ": onCreate()");
+	}
 
-    @Override
-    protected Logger getLogger() {
-        return log;
-    }
+	@Override
+	protected Logger getLogger() {
+		return log;
+	}
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        setEmptyView(R.layout.empty_data);
-    }
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		setEmptyView(R.layout.empty_data);
+	}
 
-    @Override
-    public void onServiceConnected() {
-        super.onServiceConnected();
-        dispatch(Message.obtain(null, PilightService.Request.STATE));
-    }
+	@Override
+	public void onServiceConnected() {
+		super.onServiceConnected();
+		dispatch(Message.obtain(null, PilightService.Request.STATE));
+	}
 
-    @Override
-    public void onPilightConnected() {
-        super.onPilightConnected();
-        requestLocation();
-    }
+	@Override
+	public void onPilightConnected() {
+		super.onPilightConnected();
+		requestLocation();
+	}
 
-    @Override
-    public void onLocationResponse(Location location) {
-        super.onLocationResponse(location);
+	@Override
+	public void onGroupResponse(Group group) {
+		super.onGroupResponse(group);
 
-        if (location.size() < 1) {
-            log.info(mLocationId + " has no devices to show");
-        }
+		if (getActivity() == null) {
+			return;
+		}
 
-        if (getActivity() == null) {
-            return;
-        }
+		final List<Device> devices = group.getDevices();
 
-        final DeviceAdapter adapter = new DeviceAdapter(
-                getActivity(), new ArrayList<>(location.values()), this);
+		if (devices.size() < 1) {
+			log.info(mGroupId + " has no devices to show");
+		}
 
-        setListAdapter(adapter);
+		final DeviceAdapter adapter = new DeviceAdapter(
+				getActivity(), devices, this);
 
-        adapter.sort(mDeviceOrderComparator);
-        // adapter.getFilter().filter(""); // FIXME resets scroll position
-    }
+		setListAdapter(adapter);
 
-    @Override
-    public void onPilightDeviceChange(Device remoteDevice) {
-        super.onPilightDeviceChange(remoteDevice);
+		adapter.sort(mDeviceOrderComparator);
+		// adapter.getFilter().filter(""); // FIXME resets scroll position
+	}
 
-        if (TextUtils.equals(remoteDevice.getLocationId(), mLocationId)) {
-            final DeviceAdapter adapter = (DeviceAdapter) getListAdapter();
-            adapter.remove(remoteDevice);
-            adapter.add(remoteDevice);
-            adapter.sort(mDeviceOrderComparator);
-            // adapter.getFilter().filter(""); // FIXME resets scroll position
-        }
-    }
+	@Override
+	public void onPilightDeviceChange(Device remoteDevice) {
+		super.onPilightDeviceChange(remoteDevice);
 
-    @Override
-    public void onDeviceChange(Device device, int property) {
-        sendDeviceChange(device, property);
-    }
+		if (TextUtils.equals(remoteDevice.getGroupId(), mGroupId)) {
+			final DeviceAdapter adapter = (DeviceAdapter) getListAdapter();
+			adapter.remove(remoteDevice);
+			adapter.add(remoteDevice);
+			adapter.sort(mDeviceOrderComparator);
+			// adapter.getFilter().filter(""); // FIXME resets scroll position
+		}
+	}
 
-    @Override
-    public void onListItemClick(ListView listView, View view, int position, long id) {
-        final Device device = (Device) getListAdapter().getItem(position);
+	@Override
+	public void onDeviceChange(Device device, AbstractDevice.Property property) {
+		sendDeviceChange(device, property);
+	}
 
-        switch (device.getType()) {
-            case SCREEN:
-                device.setValue(device.isUp() ? Device.VALUE_DOWN : Device.VALUE_UP);
-                break;
+	@Override
+	public void onListItemClick(ListView listView, View view, int position, long id) {
+		final Device device = (Device) getListAdapter().getItem(position);
 
-            case SWITCH:
-            case DIMMER:
-                device.setValue(device.isOn() ? Device.VALUE_OFF : Device.VALUE_ON);
-                break;
+		if (device.isReadonly()) {
+			return;
+		}
 
-            case WEATHER:
-                return;
-        }
+		switch (device.getType()) {
+			case SCREEN:
+			case SWITCH:
+			case DIMMER:
+				final ToggleableDevice toggleableDevice = (ToggleableDevice) device;
+				toggleableDevice.toggle();
+				break;
+			case WEATHER:
+				return;
+		}
 
-        sendDeviceChange(device, Device.Properties.VALUE.ordinal());
-    }
+		sendDeviceChange(device, Device.Property.VALUE);
+	}
 
-    private void requestLocation() {
-        log.info("requestLocation: " + mLocationId);
+	private void requestLocation() {
+		log.info("requestLocation: " + mGroupId);
 
-        final Message msg = Message.obtain(null, PilightService.Request.LOCATION);
-        final Bundle bundle = new Bundle();
+		final Message msg = Message.obtain(null, PilightService.Request.LOCATION);
+		final Bundle bundle = new Bundle();
 
-        assert msg != null;
-        bundle.putString(PilightService.Extra.LOCATION_ID, mLocationId);
-        msg.setData(bundle);
+		assert msg != null;
+		bundle.putString(PilightService.Extra.LOCATION_ID, mGroupId);
+		msg.setData(bundle);
 
-        dispatch(msg);
-    }
+		dispatch(msg);
+	}
 
-    private void sendDeviceChange(Device device, int property) {
-        log.info("sendDeviceChange: " + device.getId());
+	private void sendDeviceChange(Device device, AbstractDevice.Property property) {
+		log.info("sendDeviceChange: " + device.getId());
 
-        final Message msg = Message.obtain(null, PilightService.Request.DEVICE_CHANGE);
-        final Bundle bundle = new Bundle();
+		final Message msg = Message.obtain(null, PilightService.Request.DEVICE_CHANGE);
+		final Bundle bundle = new Bundle();
 
-        assert msg != null;
-        bundle.putInt(PilightService.Extra.CHANGED_PROPERTY, property);
-        bundle.putParcelable(PilightService.Extra.DEVICE, device);
-        msg.setData(bundle);
+		assert msg != null;
+		bundle.putInt(PilightService.Extra.CHANGED_PROPERTY, property.ordinal());
+		bundle.putParcelable(PilightService.Extra.DEVICE, device);
+		msg.setData(bundle);
 
-        dispatch(msg);
-    }
+		dispatch(msg);
+	}
 
-    /* FIXME parent inflation hack
-     * fragment should have its own
-     * layout with empty view */
-    private void setEmptyView(int layoutRes) {
-        final View emptyView = LayoutInflater.from(getActivity()).inflate(layoutRes, null, false);
+	/* FIXME parent inflation hack
+	 * fragment should have its own
+	 * layout with empty view */
+	private void setEmptyView(int layoutRes) {
+		final View emptyView = LayoutInflater.from(getActivity()).inflate(layoutRes, null, false);
 
-        assert getListView().getParent() != null;
-        assert emptyView != null;
+		assert getListView().getParent() != null;
+		assert emptyView != null;
 
-        ((ViewGroup) getListView().getParent()).addView(emptyView);
-        getListView().setEmptyView(emptyView);
-    }
+		((ViewGroup) getListView().getParent()).addView(emptyView);
+		getListView().setEmptyView(emptyView);
+	}
 
 }
